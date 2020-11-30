@@ -1,0 +1,47 @@
+# The snakeface settings.yml file is kept alongside the install location,
+# meaning that it should only be editable by an owner or system administrator
+
+# How to fill in fields? -------------------------------------------------------
+# For fields that you want to leave undefined, leave them as null
+# All fields get read in to a global settings.cfg.SETTING_NAME object.
+
+# How to set secrets? ----------------------------------------------------------
+# For each setting below, a value found in the environment prefixed with
+# SNAKEFACE_ will override it. This means that you should generally leave 
+# secrets unset (e.g., SENDGRID keys). and insteaed explort them in the 
+# environment (e.g., SNAKEFACE_SENDGRID_API_KEY).
+
+# Social Networks
+GOOGLE_ANALYTICS_SITE: null
+GOOGLE_ANALYTICS_ID: null
+TWITTER_USERNAME: null
+INSTAGRAM_USERNAME: null
+FACEBOOK_USERNAME: null
+
+# Repository and Documentation
+GITHUB_REPOSITORY: https://github.com/snakemake/snakeface
+GITHUB_DOCUMENTATION: https://snakemake.github.io/snakeface
+
+# Workflow running limits
+USER_WORKFLOW_LIMIT: 50 
+USER_WORKFLOW_RUNS_LIMIT: 50
+USER_WORKFLOW_GLOBAL_RUNS_LIMIT: 1000
+
+# Workflow collection settings
+PRIVATE_ONLY: null
+
+# Default working directory (overridden by client and environment)
+WORKDIR: null
+
+# Plugins (set to non null value to enable)
+PLUGIN_API_ENABLED: null
+PLUGIN_LDAP_AUTH_ENABLED: null
+PLUGIN_PAM_AUTH_ENABLED: null
+PLUGIN_SAML_AUTH_ENABLED: null
+
+# SendGrid and Help Contact Email
+HELP_CONTACT_EMAIL: null
+SENDGRID_API_KEY: null
+SENDGRID_SENDER_EMAIL: null
+
+DOMAIN_NAME: http://127.0.0.1:8000

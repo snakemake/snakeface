@@ -1,0 +1,13 @@
+backup/
+secret_key.py
+app.yaml
+app-dev.yaml
+*.pyc
+*~
+.idea/*
+.DS_Store
+.env
+__pycache__
+static/
+env/
+db.sqlite3
