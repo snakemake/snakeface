@@ -5,12 +5,12 @@ __license__ = "MPL 2.0"
 from django.contrib.sites.shortcuts import get_current_site
 from snakeface import settings
 
+
 def globals(request):
     """Returns a dict of defaults to be used by templates, if configured
     correcty in the settings.py file."""
     return {
         "DOMAIN": settings.cfg.DOMAIN_NAME,
-        "DOWNLOAD_PREFIX": settings.cfg.DOWNLOAD_PREFIX,
         "TWITTER_USERNAME": settings.cfg.TWITTER_USERNAME,
         "GITHUB_REPOSITORY": settings.cfg.GITHUB_REPOSITORY,
         "GITHUB_DOCUMENTATION": settings.cfg.GITHUB_DOCUMENTATION,

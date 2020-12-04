@@ -27,8 +27,14 @@ USER_WORKFLOW_LIMIT: 50
 USER_WORKFLOW_RUNS_LIMIT: 50
 USER_WORKFLOW_GLOBAL_RUNS_LIMIT: 1000
 
+# Only allow notebooks, set to non null (disables all other auth)
+NOTEBOOK_ONLY: null
+
 # Workflow collection settings
 PRIVATE_ONLY: null
+
+# Caching (set to null to enable)
+DISABLE_CACHE: "no"
 
 # Default working directory (overridden by client and environment)
 WORKDIR: null

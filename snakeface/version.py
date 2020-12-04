@@ -15,14 +15,14 @@ LICENSE = "LICENSE"
 # Global requirements
 
 
-INSTALL_REQUIRES = (("snakedeploy", {"min_version": None}),
-                    ("snakemake", {"min_version": None}),
-                    ("Django", {"exact_version": "3.0.8"}),
-                    ("django-taggit", {"min_version": "1.3.0"}),
-                    ("django-gravatar", {"min_version": "1.4.4"}),
-                    ("django-ratelimit", {"min_version": "3.0.0"}),
-                    ("django-extensions", {"min_version": "3.0.2"}),
-
+INSTALL_REQUIRES = (
+    ("snakedeploy", {"min_version": None}),
+    ("snakemake", {"min_version": None}),
+    ("Django", {"exact_version": "3.0.8"}),
+    ("django-taggit", {"min_version": "1.3.0"}),
+    ("django-gravatar", {"min_version": "1.4.4"}),
+    ("django-ratelimit", {"min_version": "3.0.0"}),
+    ("django-extensions", {"min_version": "3.0.2"}),
 )
 
 # Dependencies provided by snakemake: pyYaml

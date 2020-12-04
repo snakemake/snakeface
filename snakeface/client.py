@@ -15,10 +15,9 @@ import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "snakeface.settings")
 
+
 def get_parser():
-    parser = argparse.ArgumentParser(
-        description="Snakeface: interface to snakemake."
-    )
+    parser = argparse.ArgumentParser(description="Snakeface: interface to snakemake.")
 
     parser.add_argument(
         "--version",
@@ -40,15 +39,12 @@ def get_parser():
         "--verbosity",
         dest="verbosity",
         help="Verbosity (0, 1, 2, 3).",
-        choices=list(range(0,4)),
-        default=0
+        choices=list(range(0, 4)),
+        default=0,
     )
 
     parser.add_argument(
-        "--workdir",
-        dest="workdir",
-        help="Specify the working directory.",
-        nargs="?"
+        "--workdir", dest="workdir", help="Specify the working directory.", nargs="?"
     )
 
     deploy_group = parser.add_argument_group("SETTINGS")
@@ -57,15 +53,12 @@ def get_parser():
         dest="auth",
         help="Authentication type to create for the interface, defaults to token.",
         choices=["token"],
-        default="token"
+        default="token",
     )
 
     network_group = parser.add_argument_group("NETWORKING")
     network_group.add_argument(
-        "--port",
-        dest="port",
-        help="Port to serve application on.",
-        default=5555
+        "--port", dest="port", help="Port to serve application on.", default=5555
     )
 
     # Logging
@@ -114,6 +107,17 @@ def get_parser():
         action="store_true",
     )
 
+    description = "subparsers for Snakeface"
+    subparsers = parser.add_subparsers(
+        help="snakeface actions",
+        title="actions",
+        description=description,
+        dest="command",
+    )
+
+    # print version and exit
+    subparsers.add_parser("notebook", help="run a snakeface notebook")
+
     return parser
 
 
@@ -139,23 +143,36 @@ def main():
         print(snakeface.__version__)
         sys.exit(0)
 
+    # Do we want a notebook?
+    notebook = args.command == "notebook"
+    if notebook:
+        os.environ["SNAKEFACE_NOTEBOOK"] = "yes"
+        os.putenv("SNAKEFACE_NOTEBOOK", "yes")
+
     # If a working directory is set
     if args.workdir:
-        os.environ['SNAKEFACE_WORKDIR'] = args.workdir
+        os.environ["SNAKEFACE_WORKDIR"] = args.workdir
         os.putenv("SNAKEFACE_WORKDIR", args.workdir)
 
     application = get_wsgi_application()
 
     # TODO customize django logging
-    #setup_logger(
+    # setup_logger(
     #    quiet=args.quiet,
     #    nocolor=args.disable_color,
     #    debug=args.verbose,
     #    use_threads=args.use_threads,
-    #)
-    management.call_command("makemigrations")
-    management.call_command("migrate")
-    management.call_command("runserver", args.port, verbosity=args.verbosity, noreload=args.noreload)
+    # )
+    # TOOD we probably need to do this on install?
+    management.call_command("makemigrations", verbosity=args.verbosity)
+    management.call_command("migrate", verbosity=args.verbosity)
+    management.call_command(
+        "collectstatic", verbosity=args.verbosity, interactive=False
+    )
+    management.call_command(
+        "runserver", args.port, verbosity=args.verbosity, noreload=not args.noreload
+    )
+
 
 if __name__ == "__main__":
     main()

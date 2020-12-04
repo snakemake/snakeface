@@ -18,8 +18,8 @@ if not os.path.exists(SETTINGS_FILE):
 
 # Read in the settings file to get settings
 class Settings:
-    """convert a dictionary of settings (from yaml) into a class
-    """
+    """convert a dictionary of settings (from yaml) into a class"""
+
     def __init__(self, dictionary):
         for key, value in dictionary.items():
             setattr(self, key, value)
@@ -34,13 +34,14 @@ class Settings:
         for key, value in self.__dict__.items():
             yield key, value
 
-with open(SETTINGS_FILE, 'r') as fd:
+
+with open(SETTINGS_FILE, "r") as fd:
     cfg = Settings(yaml.load(fd.read(), Loader=yaml.FullLoader))
 
 # For each setting, if it's defined in the environment with SNAKEFACE_ prefix, override
 for key, value in cfg:
     envar = os.getenv("SNAKEFACE_%s" % key)
-    if envar:        
+    if envar:
         setattr(cfg, key, envar)
 
 # Quick-start development settings - unsuitable for production
@@ -57,12 +58,30 @@ cfg.PRIVATE_ONLY = cfg.PRIVATE_ONLY is not None
 DEBUG = True if os.getenv("DEBUG") != "false" else False
 
 # Derive list of plugins enabled from the environment
-PLUGINS_LOOKUP = {"api": False, "ldap_auth": False, "pam_auth": False, "saml_auth": False}
+PLUGINS_LOOKUP = {
+    "api": False,
+    "ldap_auth": False,
+    "pam_auth": False,
+    "saml_auth": False,
+}
 PLUGINS_ENABLED = []
+using_auth_backend = False
 for key, enabled in PLUGINS_LOOKUP.items():
     plugin_key = "PLUGIN_%s_ENABLED" % key.upper()
     if hasattr(cfg, plugin_key) and getattr(cfg, plugin_key) is not None:
+
+        # Don't enable auth backends if we are using a notebook
+        if cfg.NOTEBOOK_ONLY or cfg.NOTEBOOK and "AUTH" in plugin_key:
+            continue
+
+        if "AUTH" in plugin_key:
+            using_auth_backend = True
         PLUGINS_ENABLED.append(key)
+
+# Does the user want a notebook? Default to this if no auth setup
+if not hasattr(cfg, "NOTEBOOK"):
+    cfg.NOTEBOOK = True if not using_auth_backend else None
+
 
 # SECURITY WARNING: App Engine's security features ensure that it is safe to
 # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
@@ -70,12 +89,13 @@ for key, enabled in PLUGINS_LOOKUP.items():
 # See https://docs.djangoproject.com/en/2.1/ref/settings/
 ALLOWED_HOSTS = ["*"]
 
+
 def generate_secret_key(filename):
-    """A helper function to write a randomly generated secret key to file
-    """
+    """A helper function to write a randomly generated secret key to file"""
     key = get_random_secret_key()
-    with open(filename, 'w') as fd:
+    with open(filename, "w") as fd:
         fd.writelines("SECRET_KEY = '%s'" % key)
+
 
 # Generate secret key if doesn't exist, and not defined in environment
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -84,7 +104,7 @@ if not SECRET_KEY:
         from .secret_key import SECRET_KEY
     except ImportError:
         SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
-        generate_secret_key(os.path.join(SETTINGS_DIR, 'secret_key.py'))
+        generate_secret_key(os.path.join(SETTINGS_DIR, "secret_key.py"))
         from .secret_key import SECRET_KEY
 
 # Application definition
@@ -95,14 +115,14 @@ INSTALLED_APPS = [
     "snakeface.apps.users",
     "django.contrib.admin",
     "django.contrib.auth",
-    "django.contrib.contenttypes",
     "django.contrib.humanize",
+    "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
     "social_django",
-    "django_gravatar"
+    "django_gravatar",
 ]
 
 MIDDLEWARE = [
@@ -117,7 +137,7 @@ MIDDLEWARE = [
 
 # Do we want to enable the cache?
 
-if not os.environ.get("DISABLE_CACHE"):
+if not cfg.DISABLE_CACHE:
     MIDDLEWARE += [
         "django.middleware.cache.UpdateCacheMiddleware",
         "django.middleware.common.CommonMiddleware",
@@ -141,7 +161,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "yeastphenome.context_processors.globals",
+                "snakeface.context_processors.globals",
             ],
         },
     },
@@ -276,11 +296,11 @@ VIEW_RATE_LIMIT_BLOCK = (
 
 # On any admin or plugin login redirect to standard social-auth entry point for agreement to terms
 LOGIN_REDIRECT_URL = "/login"
+LOGIN_URL = "/login"
 
 ## PLUGINS #####################################################################
 if "api" in PLUGINS_ENABLED:
-    INSTALLED_APPS += ["rest_framework",
-       "rest_framework.authtoken"]
+    INSTALLED_APPS += ["rest_framework", "rest_framework.authtoken"]
 #       "rest_framework_swagger"]
 
 # Apply any plugin settings
