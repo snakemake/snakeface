@@ -30,6 +30,16 @@ USER_WORKFLOW_GLOBAL_RUNS_LIMIT: 1000
 # Only allow notebooks, set to non null (disables all other auth)
 NOTEBOOK_ONLY: null
 
+# Executors (set to non null to enable, use profile if needed), local set by default
+EXECUTOR_CLUSTER: null
+EXECUTOR_GOOGLE_LIFE_SCIENCES: null
+EXECUTOR_KUBERNETES: null
+EXECUTOR_TIBANNA: null
+EXECUTOR_GA4GH_TES: null
+
+# Set a default profile (see https://github.com/snakemake-profiles)
+PROFILE: null
+
 # Workflow collection settings
 PRIVATE_ONLY: null
 

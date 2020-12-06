@@ -1,0 +1,30 @@
+{% load static %}
+            <nav class="navbar navbar-expand-lg " color-on-scroll="500">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'base:dashboard' %}">{% if request.path == '/' %}Workflows{% elif page_title %}{{ page_title }}{% endif %}</a>
+                    <div class="collapse navbar-collapse justify-content-end" id="navigation">
+                        <ul class="nav navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-toggle="dropdown">
+                                    <span class="d-lg-none">Dashboard</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <span class="no-icon">Settings</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'users:logout' %}">
+                                    <span class="no-icon">Log out</span>
+                                </a>
+                            </li>
+                            <li><a href="https://github.com/snakemake/snakeface" target="_blank">
+                              <img src="{% static 'img/logo_square.png' %}" style="width:30px; padding-top:25px"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>

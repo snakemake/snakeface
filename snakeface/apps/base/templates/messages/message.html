@@ -1,11 +1,11 @@
 {% if messages %}<div class="row">
     <div class="col-md-12">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <div class="alert alert-{{ message.tags }}" role="alert">
+          <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
+             <i class="nc-icon nc-simple-remove"></i>
           </button>
+          <span>{{ message }}</span>
         </div>
         {% endfor %}
     </div>

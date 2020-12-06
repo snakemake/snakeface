@@ -82,7 +82,6 @@ for key, enabled in PLUGINS_LOOKUP.items():
 if not hasattr(cfg, "NOTEBOOK"):
     cfg.NOTEBOOK = True if not using_auth_backend else None
 
-
 # SECURITY WARNING: App Engine's security features ensure that it is safe to
 # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
 # app not on App Engine, make sure to set an appropriate host here.

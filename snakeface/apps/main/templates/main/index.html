@@ -26,7 +26,7 @@
                           </tr>
                       {% endfor %}</tbody>
                     </table>{% else %}
-                    <p>You don't have any Snakemake jobs running. Why don't you <a href="#"><button class="btn btn-filled btn-sm">submit one</button></a></p>
+                    <p>You don't have any Snakemake jobs running. Why don't you <a href="{% url 'main:new_workflow' %}"><button class="btn btn-filled btn-sm">submit one</button></a></p>
                     {% endif %}
                </div>
                <div class="card-footer ">
