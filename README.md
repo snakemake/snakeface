@@ -24,8 +24,14 @@ and browse to the port specified at localhost to enter a token.
 
 ![docs/images/notebook-login.png](docs/images/notebook-login.png)
 
-
 **under development**
+
+## Thanks
+
+Snakeface wouldn't be possible without several open source libraries!
+
+ - [Django](https://github.com/django/django) "The web framework for perfectionists" (and dinosaurs) 
+ - [Nucleo Icons](https://nucleoapp.com/free-icons)
 
 ## License
 

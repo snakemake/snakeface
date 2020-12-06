@@ -10,7 +10,7 @@
                    <form action="{% url 'users:notebook_login' %}" method="POST">
                        {% csrf_token %}
                        <div class="form-group">{% for messages in messages %}{{ message }}{% endfor %}
-                          <label for="id_token">Welcome to Snakeface!</label>
+                          <h3 style="font-variant: all-petite-caps;">Welcome to Snakeface!</h3>
                           <input {% if form.token.value %}value="{{ form.token.value }}"{% endif %} name="token" class="form-control" placeholder="Enter your token here" required id="id_token">
                           <span class="helptext">The notebook token should be printed in the console where you ran the application.</span>
                        </div>
@@ -21,7 +21,6 @@
         </div>
     </div>
 </div>
-</form>
 
 {% endblock %}
 {% block scripts %}

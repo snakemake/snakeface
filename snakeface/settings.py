@@ -123,6 +123,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "social_django",
     "django_gravatar",
+    "django_q",
 ]
 
 MIDDLEWARE = [
@@ -246,6 +247,7 @@ else:
         }
     }
 
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -263,6 +265,19 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",  # noqa: 501
     },
 ]
+
+# Django Q
+# workers defaults to multiprocessing CPU count, can be set if neede
+# This can be sped up running with another database
+
+Q_CLUSTER = {
+    "name": "snakecluster",
+    "timeout": 90,
+    "retry": 120,
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default",
+}
 
 
 # Internationalization

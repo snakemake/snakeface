@@ -1,0 +1,88 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block container %}
+    <div class="wrapper">
+        <div class="sidebar" data-image="{% static 'img/hero.png' %}" data-color="green">
+            <div class="sidebar-wrapper">
+                <div class="logo">
+                    <a href="https://github.com/snakemake" class="simple-text">
+                        Snakeface
+                    </a>
+                </div>
+                <ul class="nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'main:dashboard' %}">
+                            <p>Workflows</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">
+                            <p>Executors</p>
+                        </a>
+                    </li>
+                    <li class="nav-item active active-pro">
+                        <a class="nav-link active" href="{% url 'users:logout' %}">
+                            <i class="nc-icon nc-alien-33"></i>
+                            <p>Logout</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg " color-on-scroll="500">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'main:dashboard' %}">{% if request.path == '/' %}Workflows {% endif %}</a>
+                    <div class="collapse navbar-collapse justify-content-end" id="navigation">
+                        <ul class="nav navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-toggle="dropdown">
+                                    <span class="d-lg-none">Dashboard</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <span class="no-icon">Settings</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'users:logout' %}">
+                                    <span class="no-icon">Log out</span>
+                                </a>
+                            </li>
+                            <li><a href="https://github.com/snakemake/snakeface" target="_blank">
+                              <img src="{% static 'img/logo_square.png' %}" style="width:30px; padding-top:25px"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- End Navbar -->
+            <div class="content">
+                <div class="container-fluid">
+                   {% block content %}{% endblock %}
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <nav>
+                                    <ul>
+                                        <li style="float:right; padding-left:30px" ><a href="https://twitter.com/johanneskoester"><i class="icon ti ti-twitter-alt"></i></a></li>
+                                    </ul>
+                        <p class="copyright text-center">
+                            ©
+                            <script>
+                                document.write(new Date().getFullYear())
+                            </script>
+                            <a href="https://github.com/snakemake">Snakemake</a>, made with love for better workflows.
+                        </p>
+                    </nav>
+                </div>
+            </footer>
+        </div>
+    </div>
+{% endblock %}

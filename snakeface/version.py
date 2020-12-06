@@ -19,6 +19,7 @@ INSTALL_REQUIRES = (
     ("snakedeploy", {"min_version": None}),
     ("snakemake", {"min_version": None}),
     ("Django", {"exact_version": "3.0.8"}),
+    ("django-q", {"exact_version": "1.3.4"}),
     ("django-taggit", {"min_version": "1.3.0"}),
     ("django-gravatar", {"min_version": "1.4.4"}),
     ("django-ratelimit", {"min_version": "3.0.0"}),

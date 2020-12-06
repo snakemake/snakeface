@@ -163,15 +163,16 @@ def main():
     #    debug=args.verbose,
     #    use_threads=args.use_threads,
     # )
-    # TOOD we probably need to do this on install?
     management.call_command("makemigrations", verbosity=args.verbosity)
     management.call_command("migrate", verbosity=args.verbosity)
+    # management.call_command("qcluster", verbosity=args.verbosity)
     management.call_command(
         "collectstatic", verbosity=args.verbosity, interactive=False
     )
     management.call_command(
         "runserver", args.port, verbosity=args.verbosity, noreload=not args.noreload
     )
+    sys.exit(0)
 
 
 if __name__ == "__main__":

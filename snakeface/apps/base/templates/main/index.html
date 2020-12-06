@@ -1,0 +1,53 @@
+{% extends "base/page.html" %}
+{% load static %}
+{% block content %}
+<!-- TODO: this should update automatically with websockets or similar -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header ">
+                    <h4 class="card-title">Workflows</h4>
+                    <p class="card-category">{{ BACKENDS_ENABLED }}</p>
+                </div>
+                <div class="card-body">
+                    {% if tasks %}<table id="taskTable" class="tablesorter table table-striped" width="100%">
+                      <thead>
+                        <tr>
+                           <th class="text-nowrap" width="30%">Name</th>
+                           <th width="35%">Executor</th>
+                       </tr>
+                      </thead>
+
+                      <!-- TODO: this needs to match to a model -->
+                      <tbody>{% for task in tasks %}
+                          <tr>
+                            <td>{{ task.name }}</td>
+                            <td>{{ task.executor }}</td>
+                          </tr>
+                      {% endfor %}</tbody>
+                    </table>{% else %}
+                    <p>You don't have any Snakemake jobs running. Why don't you <a href="#"><button class="btn btn-filled btn-sm">submit one</button></a></p>
+                    {% endif %}
+               </div>
+               <div class="card-footer ">
+                  <div class="legend">
+                     <i class="fa fa-circle text-info"></i> Open
+                     <i class="fa fa-circle text-danger"></i> Click
+                     <i class="fa fa-circle text-warning"></i> Click Second Time
+                  </div>
+                  <hr>
+                  <div class="stats">
+                  <i class="fa fa-history"></i> Updated 3 minutes ago
+                 </div>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    {% if tasks %}$("#taskTable").dataTable({"pageLength": 10, "lengthMenu": [[10,15,20,25], [10,15,20,25]]});{% endif %}
+});
+</script>
+{% endblock %}
