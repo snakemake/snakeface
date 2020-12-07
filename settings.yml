@@ -37,6 +37,11 @@ EXECUTOR_KUBERNETES: null
 EXECUTOR_TIBANNA: null
 EXECUTOR_GA4GH_TES: null
 
+# Disable other argument groups by setting these to non null
+DISABLE_SINGULARITY: null
+DISABLE_CONDA: null
+DISABLE_NOTEBOOKS: true
+
 # Set a default profile (see https://github.com/snakemake-profiles)
 PROFILE: null
 

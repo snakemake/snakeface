@@ -24,6 +24,10 @@ and browse to the port specified at localhost to enter a token.
 
 ![docs/images/notebook-login.png](docs/images/notebook-login.png)
 
+and here is the start of creating a workflow:
+
+![docs/images/new_workflow.png](docs/images/new_workflow.png)
+
 **under development**
 
 ## Thanks

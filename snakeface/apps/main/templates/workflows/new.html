@@ -1,0 +1,55 @@
+{% extends "base/page.html" %}
+{% load my_filters %}
+{% load static %}
+{% block css %}
+<style>
+.sticky-top + .content {
+  padding-top: 250px;
+}
+</style>
+{% endblock %}
+{% block content %}
+<form>
+
+<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons">{% for name, group in groups.items %}<a class="btn btn-sm btn-filled" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}
+</div>
+
+{% for name, group in groups.items %}<div class="row" class="content">
+    <div class="col" id="div{{ name | slugify }}">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title" style="margin-left:15px;">{{ name }}</h4>
+            </div>
+            <div class="card-body">{% for action_name, action in group.items %}
+                  <div class="row">
+                     <div class="col-md-12">
+                     {{ action.field | safe }}
+                     <hr>
+                     </div>
+                  </div>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>{% endfor %}
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+$(document).ready(function(){
+     $("input[type=checkbox]").bootstrapSwitch();
+});
+
+var buttons = document.getElementById("buttons");
+var sticky = buttons.offsetTop;
+
+function stickyTop() {
+  if (window.pageYOffset > sticky) {
+    buttons.classList.add("sticky");
+  } else {
+    buttons.classList.remove("sticky");
+  }
+}
+window.onscroll = function() {stickyTop()};
+
+</script>
+{% endblock %}

@@ -58,7 +58,7 @@ def notebook_login(request):
         if form.is_valid():
             if form.cleaned_data["token"] == valid_token:
                 request.session["notebook_auth"] = valid_token
-                return redirect("base:index")
+                return redirect("base:dashboard")
             else:
                 messages.warning(request, "That token is not valid.")
         else:
@@ -69,7 +69,7 @@ def notebook_login(request):
     # If a token is already defined, just redirect to index
     token = request.session.get("notebook_auth")
     if token and token == valid_token:
-        return redirect("base:index")
+        return redirect("base:dashboard")
 
     # Unlikely to have this case, but add in case
     elif token and token != valid_token:

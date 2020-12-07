@@ -26,7 +26,7 @@ INSTALL_REQUIRES = (
     ("django-extensions", {"min_version": "3.0.2"}),
 )
 
-# Dependencies provided by snakemake: pyYaml
+# Dependencies provided by snakemake: pyYaml, jinja2
 
 EMAIL_REQUIRES = (("sendgrid", {"min_version": "6.4.3"}),)
 POSTGRES_REQUIRES = (("psycopg2-binary", {"min_version": "2.8.5"}),)

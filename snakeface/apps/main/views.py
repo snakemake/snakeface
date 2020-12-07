@@ -19,6 +19,7 @@ import tempfile
 
 from ratelimit.mixins import RatelimitMixin
 from ratelimit.decorators import ratelimit
+from snakeface.argparser import SnakefaceParser
 from snakeface.apps.users.decorators import login_is_required
 from snakeface.settings import (
     VIEW_RATE_LIMIT as rl_rate,
@@ -29,4 +30,5 @@ from snakeface.settings import (
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def new_workflow(request):
-    return render(request, "workflows/new.html")
+    parser = SnakefaceParser()
+    return render(request, "workflows/new.html", {"groups": parser.groups})
