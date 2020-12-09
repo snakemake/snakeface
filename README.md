@@ -35,7 +35,6 @@ and here is the start of creating a workflow:
 Snakeface wouldn't be possible without several open source libraries!
 
  - [Django](https://github.com/django/django) "The web framework for perfectionists" (and dinosaurs) 
- - [Nucleo Icons](https://nucleoapp.com/free-icons)
 
 ## License
 

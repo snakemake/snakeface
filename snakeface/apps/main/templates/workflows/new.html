@@ -9,9 +9,9 @@
 </style>
 {% endblock %}
 {% block content %}
-<form>
-
-<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons">{% for name, group in groups.items %}<a class="btn btn-sm btn-filled" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}
+<form method="POST" action="{% url 'main:new_workflow' %}">
+{% csrf_token %}
+<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons">{% for name, group in groups.items %}<a class="btn btn-sm btn-filled" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}  <input class="btn btn-sm btn-primary" role="button" type="submit" value="Create" style="width:200px;opacity:100%;float:right"/>
 </div>
 
 {% for name, group in groups.items %}<div class="row" class="content">

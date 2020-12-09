@@ -1,5 +1,5 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020, Vanessa SOchat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 __version__ = "0.0.0"
@@ -20,6 +20,7 @@ INSTALL_REQUIRES = (
     ("snakemake", {"min_version": None}),
     ("Django", {"exact_version": "3.0.8"}),
     ("django-q", {"exact_version": "1.3.4"}),
+    ("django-crispy-forms", {"exact_version": "1.10.0"}),
     ("django-taggit", {"min_version": "1.3.0"}),
     ("django-gravatar", {"min_version": "1.4.4"}),
     ("django-ratelimit", {"min_version": "3.0.0"}),

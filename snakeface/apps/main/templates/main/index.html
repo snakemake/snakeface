@@ -18,15 +18,14 @@
                        </tr>
                       </thead>
 
-                      <!-- TODO: this needs to match to a model -->
-                      <tbody>{% for task in tasks %}
+                      <tbody>{% for collection in collections %}
                           <tr>
-                            <td>{{ task.name }}</td>
-                            <td>{{ task.executor }}</td>
+                            <td>{{ collection.name }}</td>
+                            <td>{{ collection.repository }}</td>
                           </tr>
                       {% endfor %}</tbody>
                     </table>{% else %}
-                    <p>You don't have any Snakemake jobs running. Why don't you <a href="{% url 'main:new_workflow' %}"><button class="btn btn-filled btn-sm">submit one</button></a></p>
+                    <p>You don't have any Snakemake collections. Why don't you <a href="{% url 'main:new_collection' %}"><button class="btn btn-filled btn-sm">create one</button></a>?</p>
                     {% endif %}
                </div>
                <div class="card-footer ">

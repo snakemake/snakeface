@@ -1,5 +1,5 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020, Vanessa SOchat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from snakemake import get_argument_parser
@@ -29,6 +29,8 @@ class SnakefaceParser:
         """load the parser, optionally specifying a profile"""
         self.parser = get_argument_parser()
         self._groups = {}
+        self._args = {}
+        self.groups
 
         # A profile can further customize job submission
         if cfg.PROFILE and os.path.exists(cfg.PROFILE):
@@ -40,6 +42,40 @@ class SnakefaceParser:
 
     def __repr__(self):
         return self.__str__()
+
+    def get(self, name, default=None):
+        """A general get function to return an argument that might be nested under
+        a group. These objects are the same as linked in _groups.
+        """
+        return self._args.get(name, default)
+
+    def load(self, argdict):
+        """Load is a wrapper around set - we loop through a dictionary and set all
+        arguments.
+        """
+        for key, value in argdict.items():
+            arg = self._args.get(key)
+            if arg:
+                arg.value = value
+
+    def set(self, name, value):
+        """Set a value for an argument. This is typically what the user has selected."""
+        arg = self._args.get(name)
+        if arg:
+            arg.value = value
+
+    @property
+    def command(self):
+        """Given a loaded set of arguments, generate the command."""
+        command = "snakemake"
+        for name, arg in self._args.items():
+            if arg.value:
+                if arg.is_boolean:
+                    command += " %s" % arg.action["options"][0]
+                else:
+                    command += " %s" % (arg.action["options"][0], arg.value)
+
+        return command
 
     @property
     def groups(self):
@@ -62,6 +98,9 @@ class SnakefaceParser:
                 for a in group._group_actions
                 if self.include_argument(a.dest, group.title)
             }
+
+            # Store a flattened representation to manipulate later
+            self._args.update(group_dict)
 
             # Don't add empty groups
             if group_dict:
@@ -107,6 +146,7 @@ class SnakefaceArgument:
         self.action = action.__dict__
         self.boolean_template = ""
         self.text_template = ""
+        self.value = ""
 
     def __str__(self):
         return self.action["dest"]
@@ -118,10 +158,13 @@ class SnakefaceArgument:
     def field_name(self):
         return " ".join([x.capitalize() for x in self.action["dest"].split("_")])
 
+    @property
+    def is_boolean(self):
+        return self.action["nargs"] == 0 and self.action["const"]
+
     def field(self):
         """generate a form field for the argument"""
-        # Boolean argument
-        if self.action["nargs"] == 0 and self.action["const"]:
+        if self.is_boolean:
             return self.boolean_field()
         return self.text_field()
 
