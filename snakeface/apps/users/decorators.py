@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -24,10 +24,8 @@ def login_is_required(
 
     def wrap(request, *args, **kwargs):
 
-        # If we are using a notebook, the user is required to provide a token
-        if (cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY) and not request.session.get(
-            "notebook_auth"
-        ):
+        # If we are using a notebook, the user is required to login with a token
+        if (cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY) and not request.user.is_authenticated:
             return redirect("users:notebook_login")
 
         # If we have the token in the session

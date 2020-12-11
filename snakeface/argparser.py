@@ -205,7 +205,3 @@ class SnakefaceArgument:
             label=self.field_name,
             help=self.action["help"],
         )
-
-    # TODO: we will want to get input from interface, and be able to map
-    # it back into the parser to get the arguments and then hand off to snakemake
-    # STOPPED HERE - need to write this class

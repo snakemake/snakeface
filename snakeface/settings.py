@@ -6,7 +6,9 @@ import os
 import tempfile
 import yaml
 import sys
+
 from django.core.management.utils import get_random_secret_key
+from snakeface.apps.users.utils import get_username
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,6 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SETTINGS_FILE = os.path.join(BASE_DIR, "settings.yml")
 if not os.path.exists(SETTINGS_FILE):
     sys.exit("Global settings file settings.yml is missing in the install directory.")
+
 
 # Read in the settings file to get settings
 class Settings:
@@ -44,12 +47,26 @@ for key, value in cfg:
     if envar:
         setattr(cfg, key, envar)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
+# Secret Key
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# Update the secret key to a value of your own before deploying the app.
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+
+def generate_secret_key(filename):
+    """A helper function to write a randomly generated secret key to file"""
+    key = get_random_secret_key()
+    with open(filename, "w") as fd:
+        fd.writelines("SECRET_KEY = '%s'" % key)
+
+
+# Generate secret key if doesn't exist, and not defined in environment
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    try:
+        from .secret_key import SECRET_KEY
+    except ImportError:
+        SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
+        generate_secret_key(os.path.join(SETTINGS_DIR, "secret_key.py"))
+        from .secret_key import SECRET_KEY
+
 
 # Private only should be a boolean
 cfg.PRIVATE_ONLY = cfg.PRIVATE_ONLY is not None
@@ -82,29 +99,16 @@ for key, enabled in PLUGINS_LOOKUP.items():
 if not hasattr(cfg, "NOTEBOOK"):
     cfg.NOTEBOOK = True if not using_auth_backend else None
 
+# If we are using a notebook, grab the user that started
+cfg.USERNAME = None
+if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
+    cfg.USERNAME = get_username()
+
 # SECURITY WARNING: App Engine's security features ensure that it is safe to
 # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
 # app not on App Engine, make sure to set an appropriate host here.
 # See https://docs.djangoproject.com/en/2.1/ref/settings/
 ALLOWED_HOSTS = ["*"]
-
-
-def generate_secret_key(filename):
-    """A helper function to write a randomly generated secret key to file"""
-    key = get_random_secret_key()
-    with open(filename, "w") as fd:
-        fd.writelines("SECRET_KEY = '%s'" % key)
-
-
-# Generate secret key if doesn't exist, and not defined in environment
-SECRET_KEY = os.environ.get("SECRET_KEY")
-if not SECRET_KEY:
-    try:
-        from .secret_key import SECRET_KEY
-    except ImportError:
-        SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
-        generate_secret_key(os.path.join(SETTINGS_DIR, "secret_key.py"))
-        from .secret_key import SECRET_KEY
 
 # Application definition
 
