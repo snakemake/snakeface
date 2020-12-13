@@ -62,6 +62,11 @@ class User(AbstractUser):
     agree_terms = models.BooleanField(default=False)
     agree_terms_date = models.DateTimeField(blank=True, default=None, null=True)
 
+    # Notebook token (only for terminal notebook)
+    notebook_token = models.CharField(
+        max_length=36, default=None, null=True, blank=True
+    )
+
     # Ensure that we can add staff / superuser and retain on logout
     objects = CustomUserManager()
 
@@ -112,5 +117,6 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     to User.save.
 
     """
+    # This auth token is intended for APIs
     if created and "api" in settings.PLUGINS_ENABLED:
         Token.objects.create(user=instance)

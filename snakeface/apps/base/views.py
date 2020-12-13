@@ -14,13 +14,6 @@ from snakeface.settings import (
     VIEW_RATE_LIMIT_BLOCK as rl_block,
 )
 
-
-@login_is_required
-@ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def index(request):
-    return render(request, "main/index.html")
-
-
 # Warmup requests for app engine
 
 

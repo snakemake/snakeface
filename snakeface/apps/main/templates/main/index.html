@@ -1,23 +1,22 @@
 {% extends "base/page.html" %}
 {% load static %}
+{% block page_title %}Collections{% endblock %}
 {% block content %}
 <!-- TODO: this should update automatically with websockets or similar -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header ">
-                    <h4 class="card-title">Workflows</h4>
                     <p class="card-category">{{ BACKENDS_ENABLED }}</p>
                 </div>
                 <div class="card-body">
-                    {% if tasks %}<table id="taskTable" class="tablesorter table table-striped" width="100%">
+                    {% if collections %}<table id="taskTable" class="tablesorter table table-striped" width="100%">
                       <thead>
                         <tr>
                            <th class="text-nowrap" width="30%">Name</th>
                            <th width="35%">Executor</th>
                        </tr>
                       </thead>
-
                       <tbody>{% for collection in collections %}
                           <tr>
                             <td>{{ collection.name }}</td>
@@ -25,19 +24,20 @@
                           </tr>
                       {% endfor %}</tbody>
                     </table>{% else %}
-                    <p>You don't have any Snakemake collections. Why don't you <a href="{% url 'main:new_collection' %}"><button class="btn btn-filled btn-sm">create one</button></a>?</p>
+                    <p>You don't have any Snakemake workflow collections. Why don't you <a href="{% url 'main:new_collection' %}">create one</a>?</p>
                     {% endif %}
                </div>
-               <div class="card-footer ">
+               {% if collections %}<div class="card-footer ">
                   <div class="legend">
-                     <i class="fa fa-circle text-info"></i> Open
-                     <i class="fa fa-circle text-danger"></i> Click
-                     <i class="fa fa-circle text-warning"></i> Click Second Time
+                     <i class="fa fa-circle text-success"></i> Completed
+                     <i class="fa fa-circle text-info"></i> Running
+                     <i class="fa fa-circle text-danger"></i> Error
+                     <i class="fa fa-circle text-warning"></i> Warning
                   </div>
                   <hr>
                   <div class="stats">
                   <i class="fa fa-history"></i> Updated 3 minutes ago
-                 </div>
+                 </div>{% endif %}
               </div>
             </div>
         </div>

@@ -9,7 +9,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="dashboard"),
     path("_ah/warmup/", views.warmup, name="warmup"),
     url(
         r"^robots\.txt/$",

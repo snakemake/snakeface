@@ -8,9 +8,10 @@
         <div class="card">
            <div class="card-body">
                <form method="POST" action="{% url 'main:new_collection' %}">
-               {% csrf_token %}
-               {{ form | crispy }}
-               <input class="btn btn-sm btn-primary" role="button" type="submit" value="Create"/> 
+                 {% csrf_token %}
+                 {{ form | crispy }}
+                 <input class="btn btn-sm btn-primary" role="button" type="submit" value="Create"/> 
+               </form>
            </div>
         </div>
     </div>
