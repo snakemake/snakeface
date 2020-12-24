@@ -99,11 +99,6 @@ for key, enabled in PLUGINS_LOOKUP.items():
 if not hasattr(cfg, "NOTEBOOK"):
     cfg.NOTEBOOK = True if not using_auth_backend else None
 
-# If we are using a notebook, grab the user that started
-cfg.USERNAME = None
-if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
-    cfg.USERNAME = get_username()
-
 # SECURITY WARNING: App Engine's security features ensure that it is safe to
 # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
 # app not on App Engine, make sure to set an appropriate host here.
@@ -194,6 +189,7 @@ CACHES = {
 
 if not os.path.exists(CACHE_LOCATION):
     os.mkdir(CACHE_LOCATION)
+
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -319,6 +315,15 @@ VIEW_RATE_LIMIT_BLOCK = (
 # On any admin or plugin login redirect to standard social-auth entry point for agreement to terms
 LOGIN_REDIRECT_URL = "/login"
 LOGIN_URL = "/login"
+
+# If we are using a notebook, grab the user that started
+cfg.USERNAME = None
+if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
+    cfg.USERNAME = get_username()
+
+    # The MEDIA_ROOT should be the present working directory
+    from django.core.files.storage import FileSystemStorage
+
 
 ## PLUGINS #####################################################################
 if "api" in PLUGINS_ENABLED:

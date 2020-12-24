@@ -4,7 +4,7 @@ __license__ = "MPL 2.0"
 
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.http import HttpResponse, Http404, HttpResponseForbidden
+from django.http import HttpResponse, Http404, HttpResponseForbidden, JsonResponse
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib import messages
@@ -37,8 +37,11 @@ def index(request):
     collections = None
     if request.user.is_authenticated:
         collections = Collection.objects.filter(owners=request.user)
-    print(collections)
-    return render(request, "main/index.html", {"collections": collections})
+    return render(
+        request,
+        "main/index.html",
+        {"collections": collections, "page_title": "Dashboard"},
+    )
 
 
 # Workflows
@@ -53,7 +56,21 @@ def new_workflow(request):
             parser.set(arg, setting)
 
     # TODO, how to save to a model?
-    return render(request, "workflows/new.html", {"groups": parser.groups})
+    return render(
+        request,
+        "workflows/new.html",
+        {"groups": parser.groups, "page_title": "New Workflow"},
+    )
+
+
+@login_is_required
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
+def workflow_command(request):
+    parser = SnakefaceParser()
+    if request.method == "POST":
+        for arg, setting in request.POST.items():
+            parser.set(arg, setting)
+        return JsonResponse({"command": parser.command})
 
 
 # Collections
@@ -61,7 +78,7 @@ def new_workflow(request):
 
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def new_collection(request, cid=None):
+def edit_collection(request, cid=None):
     """Create a new collection, or edit an existing one. If a cid is provided,
     the view serves to update an existing collection.
     """
@@ -77,6 +94,7 @@ def new_collection(request, cid=None):
 
     # Allow view to be used to also update
     form = CollectionForm(request.POST or None, instance=collection)
+    page_title = "Edit collection" if exists else "New collection"
 
     if request.method == "POST" and form.is_valid():
         collection = form.save()
@@ -90,7 +108,7 @@ def new_collection(request, cid=None):
         return redirect("main:view_collection", args=[collection.id])
 
     return render(
-        request, "collections/new.html", {"form": form, "page_title": "New Collection"}
+        request, "collections/new.html", {"form": form, "page_title": page_title}
     )
 
 
@@ -102,15 +120,4 @@ def view_collection(request, cid):
         request,
         "collections/detail.html",
         {"collection": collection, "page_title": collection.name},
-    )
-
-
-@login_is_required
-@ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def edit_collection(request, cid):
-
-    collection = get_object_or_404(Collection, pk=cid)
-    form = CollectionForm(instance=collection)
-    return render(
-        request, "collections/new.html", {"form": form, "page_title": "Edit Collection"}
     )

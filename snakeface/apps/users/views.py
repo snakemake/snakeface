@@ -62,19 +62,15 @@ def notebook_login(request):
                     messages.warning(request, "That token is not valid.")
                 else:
                     login(request, user)
-                    return redirect("base:dashboard")
+                    return redirect("main:dashboard")
             else:
                 messages.warning(request, "That token is not valid.")
         else:
-            return render(
-                request, "login/notebook.html", {"form": form, "include_footer": True}
-            )
+            return render(request, "login/notebook.html", {"form": form})
 
     # If a user is already authenticated, redirect to dashboard
     if request.user.is_authenticated:
-        return redirect("base:dashboard")
+        return redirect("main:dashboard")
 
     # If the token isn't provided, they need to provide it
-    return render(
-        request, "login/notebook.html", {"form": form, "include_footer": True}
-    )
+    return render(request, "login/notebook.html", {"form": form})

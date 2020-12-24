@@ -18,7 +18,7 @@
               <tbody>{% for collection in collections %}
                    <tr>
                       <td>{{ collection.name }}</td>
-                      <td>{{ collection.repository }}</td>
+                      <td><button class="btn btn-primary"><a href="{% url 'main:view_collection' collection.id %}">View</a></button></td>
                    </tr>
               {% endfor %}</tbody>
               </table>{% else %}

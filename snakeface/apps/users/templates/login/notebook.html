@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 {% block content %}
-<div class="container">
+<div class="container" style="padding-top:100px">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -14,14 +14,13 @@
                           <input {% if form.token.value %}value="{{ form.token.value }}"{% endif %} name="token" class="form-control" placeholder="Enter your token here" required id="id_token">
                           <small>The notebook token should be printed in the console where you ran the application.</small>
                        </div>
-                       <input type="submit" value="Submit" class="btn btn-sm btn-filled">
+                       <input type="submit" value="Submit" class="btn btn-sm btn-primary">
                    </form>
                </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}
 {% block scripts %}
 {% endblock %}

@@ -6,12 +6,29 @@
 .sticky-top + .content {
   padding-top: 250px;
 }
+code {
+    color: rgb(0, 123, 255);
+    display: inline-block;
+    max-width: 1400px;
+    padding: 10px;
+}
+.sticky-bottom {
+    flex-direction: row;
+    padding: 5px;
+    padding-top:10px;
+    margin: -28px;
+    position: fixed;
+    bottom: 0px;
+    background-color: white;
+    height: 150px;
+    width: 100%;
+}
 </style>
 {% endblock %}
 {% block content %}
 <form method="POST" action="{% url 'main:new_workflow' %}">
 {% csrf_token %}
-<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons">{% for name, group in groups.items %}<a class="btn btn-sm btn-filled" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}  <input class="btn btn-sm btn-primary" role="button" type="submit" value="Create" style="width:200px;opacity:100%;float:right"/>
+<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons">{% for name, group in groups.items %}<a class="btn btn-sm btn-primary" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}  <input class="btn btn-sm btn-primary" role="button" type="submit" value="Create" style="width:200px;opacity:100%;float:right"/>
 </div>
 
 {% for name, group in groups.items %}<div class="row" class="content">
@@ -32,6 +49,12 @@
         </div>
     </div>{% endfor %}
 </form>
+
+<div class="sticky-bottom">
+    <code id="command">
+    </code>
+</div>
+
 {% endblock %}
 {% block scripts %}
 <script>
@@ -42,6 +65,43 @@ $(document).ready(function(){
 var buttons = document.getElementById("buttons");
 var sticky = buttons.offsetTop;
 
+// Helper to serliaze form into object
+function serializeForm(formArray) {
+    var returnArray = {};
+    for (var i = 0; i < formArray.length; i++){
+        returnArray[formArray[i]['name']] = formArray[i]['value'];
+    }
+    return returnArray;
+}
+
+function update_command() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const data = $("form").serialize();
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'main:workflow_command' %}",
+        data: data,
+        dataType: "json",
+        headers: {'X-CSRFToken': csrftoken},
+        success: function(data) {
+           $("#command").html(data['command'])
+        },
+        error: function() {
+            alert('error handling here');
+        }
+    });
+}
+
+// Ensure that we update the command preview when the form changes
+$("input").change(function(){
+     update_command();
+})
+
+$('input').on('switchChange.bootstrapSwitch', function (event, state) {
+     update_command();
+}); 
+
 function stickyTop() {
   if (window.pageYOffset > sticky) {
     buttons.classList.add("sticky");
@@ -50,6 +110,6 @@ function stickyTop() {
   }
 }
 window.onscroll = function() {stickyTop()};
-
+update_command()
 </script>
 {% endblock %}

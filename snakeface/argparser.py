@@ -70,10 +70,15 @@ class SnakefaceParser:
         command = "snakemake"
         for name, arg in self._args.items():
             if arg.value:
+                flag = ""
+                if arg.action["option_strings"]:
+                    flag = arg.action["option_strings"][0]
+
+                # Assemble argument based on type
                 if arg.is_boolean:
-                    command += " %s" % arg.action["options"][0]
+                    command += " %s" % flag
                 else:
-                    command += " %s" % (arg.action["options"][0], arg.value)
+                    command += " %s %s" % (flag, arg.value)
 
         return command
 

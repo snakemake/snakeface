@@ -9,8 +9,10 @@ from . import views
 urlpatterns = [
     path("", views.index, name="dashboard"),
     path("workflows/new/", views.new_workflow, name="new_workflow"),
-    path("collection/new/", views.new_collection, name="new_collection"),
+    path("workflows/command/", views.workflow_command, name="workflow_command"),
+    path("collection/new/", views.edit_collection, name="new_collection"),
     path("collection/<int:cid>/", views.view_collection, name="view_collection"),
+    path("collection/<int:cid>/edit", views.edit_collection, name="edit_collection"),
 ]
 
 app_name = "main"

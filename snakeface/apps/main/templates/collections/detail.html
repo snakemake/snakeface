@@ -23,6 +23,17 @@
               {% endfor %}</tbody>
               </table>{% else %}
                <p>You don't have any workflows in this collections. Why don't you <a href="{% url 'main:new_workflow' %}">create one</a>?</p>{% endif %}
+               {% if collections %}<div class="card-footer ">
+                  <div class="legend">
+                     <i class="fa fa-circle text-success"></i> Completed
+                     <i class="fa fa-circle text-info"></i> Running
+                     <i class="fa fa-circle text-danger"></i> Error
+                     <i class="fa fa-circle text-warning"></i> Warning
+                  </div>
+                  <hr>
+                  <div class="stats">
+                  <i class="fa fa-history"></i> Updated 3 minutes ago
+                 </div>{% endif %}
            </div>
         </div>
     </div>
