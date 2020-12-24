@@ -1,0 +1,13 @@
+.card {
+  padding:20px;
+}
+
+btn {
+  cursor: pointer !important;
+}
+
+#square_logo {
+  width:50px;
+  float: right;
+  padding-bottom: 20px;
+}
