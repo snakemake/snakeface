@@ -150,6 +150,8 @@ def main():
         os.putenv("SNAKEFACE_NOTEBOOK", "yes")
 
     # If a working directory is set
+    if not args.workdir or args.workdir == ".":
+        args.workdir = os.getcwd()
     if args.workdir:
         os.environ["SNAKEFACE_WORKDIR"] = args.workdir
         os.putenv("SNAKEFACE_WORKDIR", args.workdir)

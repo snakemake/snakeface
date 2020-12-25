@@ -6,8 +6,22 @@ btn {
   cursor: pointer !important;
 }
 
+.btn-info {
+   cursor: pointer !important;
+   border-color: #17a2b8 !important;   
+}
+
+.alert-secondary, .alert-info {
+  color: #464a4e !important;
+}
+
 #square_logo {
   width:50px;
   float: right;
   padding-bottom: 20px;
+}
+
+.alert button.close {
+    top: 36% !important;
+    right: 25px !important;
 }

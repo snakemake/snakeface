@@ -1,0 +1,9 @@
+<div class="form-group"> 
+    <label>{{ label }}{% if required %}<span class="asteriskField">*</span>{% endif %}</label> 
+        <div class="">
+            <select name="{{ name }}" class="select form-control">{% for choice in choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}</select>
+        </div>
+     <small>{{ help }}</small>
+</div>

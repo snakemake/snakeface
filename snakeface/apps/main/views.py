@@ -19,8 +19,9 @@ import tempfile
 from ratelimit.mixins import RatelimitMixin
 from ratelimit.decorators import ratelimit
 from snakeface.argparser import SnakefaceParser
+from snakeface.settings import cfg
 from snakeface.apps.main.models import Collection
-from snakeface.apps.main.forms import CollectionForm
+from snakeface.apps.main.forms import CollectionForm, WorkflowForm
 from snakeface.apps.users.decorators import login_is_required
 from snakeface.settings import (
     VIEW_RATE_LIMIT as rl_rate,
@@ -49,23 +50,43 @@ def index(request):
 
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def new_workflow(request):
+def new_workflow(request, cid):
     parser = SnakefaceParser()
+    collection = get_object_or_404(Collection, pk=cid)
+
+    # Case 1: parse a provided form
     if request.method == "POST":
         for arg, setting in request.POST.items():
             parser.set(arg, setting)
 
-    # TODO, how to save to a model?
+    # Case 2: no snakefiles:
+    if not parser.snakefiles:
+        message = (
+            "No Snakefiles were found in any path under %s."
+            " You must have one to create a new workflow." % cfg.WORKDIR
+        )
+        messages.info(request, message)
+        return view_collection(request, cid)
+
+    print(parser.snakefiles)
+    # Case 3: Render an empty form
+    form = WorkflowForm()
     return render(
         request,
         "workflows/new.html",
-        {"groups": parser.groups, "page_title": "New Workflow"},
+        {
+            "groups": parser.groups,
+            "page_title": "New Workflow",
+            "form": form,
+            "collection": collection,
+        },
     )
 
 
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def workflow_command(request):
+    """is called from the browser via POST to update the command"""
     parser = SnakefaceParser()
     if request.method == "POST":
         for arg, setting in request.POST.items():
@@ -104,8 +125,8 @@ def edit_collection(request, cid=None):
             collection.name,
             "updated" if exists else "created",
         )
-        messages.info(request, message % collection.name)
-        return redirect("main:view_collection", args=[collection.id])
+        messages.info(request, message)
+        return reverse("main:view_collection", args=[collection.id])
 
     return render(
         request, "collections/new.html", {"form": form, "page_title": page_title}

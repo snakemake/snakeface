@@ -11,6 +11,7 @@ def globals(request):
     correcty in the settings.py file."""
     return {
         "DOMAIN": settings.cfg.DOMAIN_NAME,
+        "NOTEBOOK": settings.cfg.NOTEBOOK,
         "TWITTER_USERNAME": settings.cfg.TWITTER_USERNAME,
         "GITHUB_REPOSITORY": settings.cfg.GITHUB_REPOSITORY,
         "GITHUB_DOCUMENTATION": settings.cfg.GITHUB_DOCUMENTATION,

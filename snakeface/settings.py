@@ -99,6 +99,10 @@ for key, enabled in PLUGINS_LOOKUP.items():
 if not hasattr(cfg, "NOTEBOOK"):
     cfg.NOTEBOOK = True if not using_auth_backend else None
 
+# If the working directory isn't defined, set to pwd
+if not hasattr(cfg, "WORKDIR") or not cfg.WORKDIR:
+    cfg.WORKDIR = os.getcwd()
+
 # SECURITY WARNING: App Engine's security features ensure that it is safe to
 # have ALLOWED_HOSTS = ['*'] when the app is deployed. If you deploy a Django
 # app not on App Engine, make sure to set an appropriate host here.
@@ -298,6 +302,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+# TODO: we probably want to put these in one spot relative to user home
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_ROOT = "static"
@@ -320,9 +325,6 @@ LOGIN_URL = "/login"
 cfg.USERNAME = None
 if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
     cfg.USERNAME = get_username()
-
-    # The MEDIA_ROOT should be the present working directory
-    from django.core.files.storage import FileSystemStorage
 
 
 ## PLUGINS #####################################################################

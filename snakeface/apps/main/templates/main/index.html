@@ -2,7 +2,6 @@
 {% load static %}
 {% block page_title %}Collections{% endblock %}
 {% block content %}
-<!-- TODO: this should update automatically with websockets or similar -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -10,12 +9,10 @@
                     <p class="card-category">{{ BACKENDS_ENABLED }}</p>
                 </div>
                 <div class="card-body">
-                    {% if collections %}<table id="taskTable" class="tablesorter table table-striped" width="100%">
+                    {% if collections %}<table id="taskTable" class="table table-striped table-bordered"  width="100%">
                       <thead>
-                        <tr>
-                           <th class="text-nowrap" width="30%">Name</th>
-                           <th width="35%">Executor</th>
-                       </tr>
+                           <th>Name</th>
+                           <th>Executor</th>
                       </thead>
                       <tbody>{% for collection in collections %}
                           <tr>
@@ -24,7 +21,7 @@
                           </tr>
                       {% endfor %}</tbody>
                     </table>{% else %}
-                    <p>You don't have any Snakemake workflow collections. Why don't you <a href="{% url 'main:new_collection' %}">create one</a>?</p>
+                    <p class="alert alert-secondary">You don't have any Snakemake workflow collections. Why don't you <a href="{% url 'main:new_collection' %}">create one</a>?</p>
                     {% endif %}
                </div>
               </div>
@@ -35,7 +32,7 @@
 {% block scripts %}
 <script>
 $(document).ready(function(){
-    {% if tasks %}$("#taskTable").dataTable({"pageLength": 10, "lengthMenu": [[10,15,20,25], [10,15,20,25]]});{% endif %}
+    {% if collections %}$("#taskTable").DataTable();{% endif %}
 });
 </script>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends "base/page.html" %}
 {% load my_filters %}
+{% load crispy_forms_tags %}
 {% load static %}
 {% block css %}
 <style>
@@ -26,9 +27,28 @@ code {
 </style>
 {% endblock %}
 {% block content %}
-<form method="POST" action="{% url 'main:new_workflow' %}">
+<form method="POST" action="{% url 'main:new_workflow' collection.id %}">
 {% csrf_token %}
-<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons">{% for name, group in groups.items %}<a class="btn btn-sm btn-primary" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}  <input class="btn btn-sm btn-primary" role="button" type="submit" value="Create" style="width:200px;opacity:100%;float:right"/>
+<div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons"><a class="btn btn-sm btn-primary" href="#div_workdir" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;">WORKDIR</a>{% for name, group in groups.items %}<a class="btn btn-sm btn-primary" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}  <input class="btn btn-sm btn-info" role="button" type="submit" value="Run Workflow" style="width:200px;opacity:100%;float:right"/>
+</div>
+
+<br><br>
+<div class="row" class="content">
+    <div class="col" id="div_workdir">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title" style="margin-left:15px;">Filepaths</h4>
+            </div>
+            <div class="card-body">
+               <div class="row">
+                   <div class="col-md-12">
+                   {{ form | crispy }}
+                   <small>{% if NOTEBOOK %}Your working directory must be within the path where you launched your notebook.{% else %}Your working directory must be within your user space.{% endif %}
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% for name, group in groups.items %}<div class="row" class="content">
@@ -44,10 +64,11 @@ code {
                      <hr>
                      </div>
                   </div>{% endfor %}
-                </div>
             </div>
         </div>
-    </div>{% endfor %}
+    </div>
+</div>{% endfor %}
+
 </form>
 
 <div class="sticky-bottom">

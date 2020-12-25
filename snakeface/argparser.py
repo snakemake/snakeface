@@ -4,6 +4,7 @@ __license__ = "MPL 2.0"
 
 from snakemake import get_argument_parser
 from snakeface.settings import cfg
+from snakeface.apps.main.utils import get_snakefile_choices
 from jinja2 import Template
 import argparse
 import logging
@@ -24,6 +25,9 @@ class SnakefaceParser:
     not to use it to parse arguments and validate, but to output all
     fields to a front end form.
     """
+
+    # Update the listing of snakefiles on the parser init
+    snakefiles = get_snakefile_choices()
 
     def __init__(self):
         """load the parser, optionally specifying a profile"""
@@ -96,6 +100,10 @@ class SnakefaceParser:
         for action in self.parser._actions:
             lookup[action.dest] = SnakefaceArgument(action)
 
+            # Define choices
+            if action.dest == "snakefile":
+                lookup[action.dest].update_choice_fields({"snakefile": self.snakefiles})
+
         # This top level organizes into groups
         for group in self.parser._action_groups:
             group_dict = {
@@ -151,6 +159,8 @@ class SnakefaceArgument:
         self.action = action.__dict__
         self.boolean_template = ""
         self.text_template = ""
+        self.choice_template = ""
+        self.choice_fields = {}
         self.value = ""
 
     def __str__(self):
@@ -158,6 +168,9 @@ class SnakefaceArgument:
 
     def __repr__(self):
         return self.__str__()
+
+    def update_choice_fields(self, updates):
+        self.choice_fields.update(updates)
 
     @property
     def field_name(self):
@@ -169,6 +182,8 @@ class SnakefaceArgument:
 
     def field(self):
         """generate a form field for the argument"""
+        if self.action["dest"] in self.choice_fields:
+            return self.choice_field()
         if self.is_boolean:
             return self.boolean_field()
         return self.text_field()
@@ -209,4 +224,19 @@ class SnakefaceArgument:
             default=self.action["default"] or "",
             label=self.field_name,
             help=self.action["help"],
+        )
+
+    def choice_field(self):
+        """generate a choice field for using a pre-loaded jinja2 template"""
+        if not self.choice_template:
+            self.choice_template = self.load_template(
+                os.path.join(templates, "choice_field.html")
+            )
+
+        choices = []
+        return self.choice_template.render(
+            name=self.action["dest"],
+            label=self.field_name,
+            help=self.action["help"],
+            choices=self.choice_fields.get(self.action["dest"]),
         )
