@@ -12,7 +12,13 @@ urlpatterns = [
     path("workflows/command/", views.workflow_command, name="workflow_command"),
     path("collection/new/", views.edit_collection, name="new_collection"),
     path("collection/<int:cid>/", views.view_collection, name="view_collection"),
-    path("collection/<int:cid>/edit", views.edit_collection, name="edit_collection"),
+    path("collection/<int:cid>/edit/", views.edit_collection, name="edit_collection"),
+    path(
+        "collection/workflows/<int:wid>/edit/",
+        views.edit_workflow,
+        name="edit_workflow",
+    ),
+    path("collection/workflows/<int:wid>/", views.view_workflow, name="view_workflow"),
 ]
 
 app_name = "main"

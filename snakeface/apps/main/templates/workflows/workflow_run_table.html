@@ -1,0 +1,33 @@
+{% if workflow.workflowrun_set.count > 0 %}<div class="row">
+    <div class="col">
+        <div class="card">
+           <div class="card-body">
+             <table id="taskTable" class="tablesorter table table-striped" width="100%">
+               <thead>
+                    <tr>
+                       <th class="text-nowrap" width="30%">Name</th>
+                       <th width="35%">Executor</th>
+                   </tr>
+              </thead>
+              <tbody>{% for run in workflow.workflowrun_set.all %}
+                   <tr>
+                      <td></td>
+                      <td></td>
+                   </tr>
+              {% endfor %}</tbody>
+              </table>{% endif %}
+               {% if workflow.workflowrun_set.count > 0 %}<div class="card-footer ">
+                  <div class="legend">
+                     <i class="fa fa-circle text-success"></i> Completed
+                     <i class="fa fa-circle text-info"></i> Running
+                     <i class="fa fa-circle text-danger"></i> Error
+                     <i class="fa fa-circle text-warning"></i> Warning
+                  </div>
+                  <hr>
+                  <div class="stats">
+                  <i class="fa fa-history"></i> Updated 3 minutes ago
+                 </div>
+           </div>
+        </div>
+    </div>
+</div>{% endif %}

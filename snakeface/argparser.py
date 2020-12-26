@@ -35,6 +35,7 @@ class SnakefaceParser:
         self._groups = {}
         self._args = {}
         self.groups
+        self._errors = []
 
         # A profile can further customize job submission
         if cfg.PROFILE and os.path.exists(cfg.PROFILE):
@@ -46,6 +47,10 @@ class SnakefaceParser:
 
     def __repr__(self):
         return self.__str__()
+
+    @property
+    def errors(self):
+        return " ".join(self._errors)
 
     def get(self, name, default=None):
         """A general get function to return an argument that might be nested under
@@ -67,6 +72,26 @@ class SnakefaceParser:
         arg = self._args.get(name)
         if arg:
             arg.value = value
+
+    def to_dict(self):
+        """the opposite of load, this function exports an argument"""
+        return {name: arg.value for name, arg in self._args.items()}
+
+    @property
+    def snakefile(self):
+        snakefile = self._args.get("snakefile")
+        if snakefile:
+            return snakefile.value
+
+    def validate(self):
+        """ensure that all required args are defined"""
+        required = ["cores", "snakefile"]
+        valid = True
+        for key in required:
+            if not self._args.get(key):
+                self._errors.append("The %s is required." % key)
+                valid = False
+        return valid
 
     @property
     def command(self):

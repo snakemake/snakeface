@@ -20,7 +20,7 @@ from ratelimit.mixins import RatelimitMixin
 from ratelimit.decorators import ratelimit
 from snakeface.argparser import SnakefaceParser
 from snakeface.settings import cfg
-from snakeface.apps.main.models import Collection
+from snakeface.apps.main.models import Collection, Workflow
 from snakeface.apps.main.forms import CollectionForm, WorkflowForm
 from snakeface.apps.users.decorators import login_is_required
 from snakeface.settings import (
@@ -50,27 +50,69 @@ def index(request):
 
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
+def edit_workflow(request, wid):
+
+    workflow = get_object_or_404(Workflow, pk=wid)
+
+    # Give a warning if the snakefile doesn't exist
+    if not os.path.exists(workflow.snakefile):
+        messages.warning(
+            request, "Warning: This snakefile doesn't appear to exist anymore."
+        )
+
+    # Create and update a parser with the current settings
+    parser = SnakefaceParser()
+    parser.load(workflow.data)
+    return edit_or_update_workflow(
+        request, workflow=workflow, collection=workflow.collection, parser=parser
+    )
+
+
+@login_is_required
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def new_workflow(request, cid):
     parser = SnakefaceParser()
     collection = get_object_or_404(Collection, pk=cid)
+    return edit_or_update_workflow(request, collection=collection, parser=parser)
 
-    # Case 1: parse a provided form
+
+def edit_or_update_workflow(request, collection, parser, workflow=None):
+    """A shared function to edit or update an existing workflow."""
+    action = "update"
+    if not workflow:
+        action = "create"
+
+    # Case 1: parse a provided form to update current data
     if request.method == "POST":
         for arg, setting in request.POST.items():
             parser.set(arg, setting)
+
+        if not parser.validate():
+            message.error(request, parser.errors)
+        else:
+            if not workflow:
+                workflow = Workflow()
+            workflow.data = parser.to_dict()
+            workflow.snakefile = parser.snakefile
+            workflow.workdir = request.POST.get("workdirs", cfg.WORKDIR)
+            workflow.collection = collection
+            # Save updates the dag and command
+            workflow.save()
+            return redirect("main:view_workflow", wid=workflow.id)
 
     # Case 2: no snakefiles:
     if not parser.snakefiles:
         message = (
             "No Snakefiles were found in any path under %s."
-            " You must have one to create a new workflow." % cfg.WORKDIR
+            " You must have one to %s a workflow." % (cfg.WORKDIR, action)
         )
         messages.info(request, message)
-        return view_collection(request, cid)
+        return redirect("main:view_collection", cid=workflow.collection.id)
 
-    print(parser.snakefiles)
-    # Case 3: Render an empty form
+    # Case 3: Render an empty form with current working directory
     form = WorkflowForm()
+    if workflow:
+        form = WorkflowForm(workdirs=workflow.workdir)
     return render(
         request,
         "workflows/new.html",
@@ -92,6 +134,20 @@ def workflow_command(request):
         for arg, setting in request.POST.items():
             parser.set(arg, setting)
         return JsonResponse({"command": parser.command})
+
+
+@login_is_required
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
+def view_workflow(request, wid):
+    workflow = get_object_or_404(Workflow, pk=wid)
+    return render(
+        request,
+        "workflows/detail.html",
+        {
+            "workflow": workflow,
+            "page_title": "%s: %s" % (workflow.collection.name, workflow.id),
+        },
+    )
 
 
 # Collections
@@ -126,7 +182,7 @@ def edit_collection(request, cid=None):
             "updated" if exists else "created",
         )
         messages.info(request, message)
-        return reverse("main:view_collection", args=[collection.id])
+        return redirect("main:view_collection", cid=collection.id)
 
     return render(
         request, "collections/new.html", {"form": form, "page_title": page_title}

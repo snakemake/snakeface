@@ -8,32 +8,21 @@
     <div class="col">
         <div class="card">
            <div class="card-body">
-             {% if collection.workflows.count > 0 %}<table id="taskTable" class="tablesorter table table-striped" width="100%">
+             {% if collection.workflow_set.count > 0 %}<table id="taskTable" class="tablesorter table table-striped" width="100%">
                <thead>
                     <tr>
-                       <th class="text-nowrap" width="30%">Name</th>
-                       <th width="35%">Executor</th>
+                       <th>ID</th>
+                       <th>Command</th>
                    </tr>
               </thead>
-              <tbody>{% for workflow in collections.workflows.all %}
+              <tbody>{% for workflow in collections.workflow_set.all %}
                    <tr>
-                      <td>{{ workflow.name }}</td>
-                      <td>{{ workflow.repository }}</td>
+                      <td>{{ workflow.id }}</td>
+                      <td>{{ workflow.command }}</td>
                    </tr>
               {% endfor %}</tbody>
               </table>{% else %}
                <p>You don't have any workflows in this collections. Why don't you <a href="{% url 'main:new_workflow' collection.id %}">create one</a>?</p>{% endif %}
-               {% if collections %}<div class="card-footer ">
-                  <div class="legend">
-                     <i class="fa fa-circle text-success"></i> Completed
-                     <i class="fa fa-circle text-info"></i> Running
-                     <i class="fa fa-circle text-danger"></i> Error
-                     <i class="fa fa-circle text-warning"></i> Warning
-                  </div>
-                  <hr>
-                  <div class="stats">
-                  <i class="fa fa-history"></i> Updated 3 minutes ago
-                 </div>{% endif %}
            </div>
         </div>
     </div>

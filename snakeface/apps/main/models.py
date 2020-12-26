@@ -4,6 +4,7 @@ __license__ = "MPL 2.0"
 
 from django.core.exceptions import FieldError
 from django.db.models import Q
+from django.db.models.signals import pre_save
 from django.db import models
 from django.apps import apps
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -16,16 +17,58 @@ from django.urls import reverse
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from taggit.managers import TaggableManager
+from django.contrib.postgres.fields import (
+    JSONField as DjangoJSONField,
+    ArrayField as DjangoArrayField,
+)
+
+from snakeface.apps.main.utils import CommandRunner, write_file, get_tmpfile
+from snakeface.argparser import SnakefaceParser
 from snakeface.settings import cfg
+from django.db.models import Field
 
 import itertools
 import uuid
+import json
+import os
 
 
 PRIVACY_CHOICES = (
     (False, "Public (The workflow collection will be accessible by anyone)"),
     (True, "Private (The workflow collection will be not listed.)"),
 )
+
+
+class JSONField(DjangoJSONField):
+    pass
+
+
+if "sqlite" in settings.DATABASES["default"]["ENGINE"]:
+
+    class JSONField(Field):
+        def db_type(self, connection):
+            return "text"
+
+        def from_db_value(self, value, expression, connection):
+            if value is not None:
+                return self.to_python(value)
+            return value
+
+        def to_python(self, value):
+            if value is not None:
+                try:
+                    return json.loads(value)
+                except (TypeError, ValueError):
+                    return value
+            return value
+
+        def get_prep_value(self, value):
+            if value is not None:
+                return str(json.dumps(value))
+            return value
+
+        def value_to_string(self, obj):
+            return self.value_from_object(obj)
 
 
 class Workflow(models.Model):
@@ -39,7 +82,9 @@ class Workflow(models.Model):
         blank=False,
         null=False,
     )
-
+    data = JSONField(blank=False, null=False, default="{}")
+    dag = models.TextField(blank=True, null=True)
+    command = models.TextField(blank=False, null=False)
     snakefile = models.TextField(blank=False, null=False, max_length=250)
     workdir = models.TextField(blank=False, null=False, max_length=250)
     snakemake_id = models.TextField(blank=False, null=False)
@@ -49,10 +94,50 @@ class Workflow(models.Model):
         "main.Collection", null=False, blank=False, on_delete=models.CASCADE
     )
 
+    def update_command(self, command=None, do_save=False):
+        """Given a command (or an automated save from the signal) update
+        the command for the workflow.
+        """
+        if command:
+            self.command = command
+        else:
+            parser = SnakefaceParser()
+            parser.load(self.data)
+            self.command = parser.command
+        if do_save:
+            self.save()
 
+    def update_dag(self, do_save=False):
+        """given a snakefile, run the command to update the dag"""
+        if self.snakefile and os.path.exists(self.snakefile):
+            runner = CommandRunner()
+
+            # First generate the dag, save to temporary dot file
+            runner.run_command(
+                ["snakemake", "--dag"], cwd=os.path.dirname(self.snakefile)
+            )
+            filename = write_file(
+                get_tmpfile("snakeface-dag-", ".dot"), "".join(runner.output)
+            )
+
+            # Next generate the svg with dot, save to model
+            runner.run_command(
+                ["dot", "-Tsvg", os.path.basename(filename)],
+                cwd=os.path.dirname(filename),
+            )
+            self.dag = "".join(runner.output)
+            os.remove(filename)
+
+            # If running from the post_save signal, would be infinite loop
+            if do_save:
+                self.save()
+
+
+## TODO: need to add functionality here so a run is associated with an executor
 class WorkflowRun(models.Model):
     """A workflow run is a result for running a workflow."""
 
+    executor = models.TextField(null=False, blank=False)
     add_date = models.DateTimeField("date published", auto_now_add=True)
     modify_date = models.DateTimeField("date modified", auto_now=True)
     workflow = models.ForeignKey(
@@ -139,3 +224,11 @@ class Collection(models.Model):
 
     class Meta:
         app_label = "main"
+
+
+def update_workflow(sender, instance, **kwargs):
+    instance.update_dag()
+    instance.update_command()
+
+
+pre_save.connect(update_workflow, sender=Workflow)

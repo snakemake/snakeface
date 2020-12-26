@@ -1,0 +1,65 @@
+{% extends "base/page.html" %}
+{% load crispy_forms_tags %}
+{% load my_filters %}
+{% load static %}
+{% block page_title %}Collection > {{ collection.name }}{% endblock %}
+{% block css %}
+<style>
+code {
+    color: rgb(0, 123, 255);
+    display: inline-block;
+    max-width: 1400px;
+    padding: 10px;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+           <div class="card-body">
+           <table class="tablesorter table table-striped" width="100%">
+              <tbody>
+                   <tr>
+                      <td>Snakefile</td>
+                      <td>{{ workflow.snakefile }}</td>
+                   </tr>
+                   <tr>
+                      <td>Workdir</td>
+                      <td>{{ workflow.workdir }}</td>
+                   </tr>
+                   <tr>
+                      <td>Command</td>
+                      <td><code>{{ workflow.command }}</code></td>
+                   </tr>
+              </tbody>
+           </table>              
+           </div>
+        </div>
+    </div>
+</div>
+
+{% if workflow.dag %}<div class="row">
+    <div class="col">
+        <div class="card">
+           <div class="card-body">
+               <div class="row">
+                   <div class="col-md-6">
+                   {{ workflow.dag | safe }}
+                   </div>
+                   <div class="col-md-6">
+                   {% include "workflows/workflow_run_table.html" %}
+                   </div>
+               </div>
+           </div>
+        </div>
+    </div>
+</div>{% endif %}
+
+{% endblock %}
+{% block scripts %}
+<script>
+$(document).ready(function(){
+});
+</script>
+{% endblock %}
