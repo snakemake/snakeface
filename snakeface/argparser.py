@@ -4,11 +4,13 @@ __license__ = "MPL 2.0"
 
 from snakemake import get_argument_parser
 from snakeface.settings import cfg
+from snakeface import settings
 from snakeface.apps.main.utils import get_snakefile_choices
 from jinja2 import Template
 import argparse
 import logging
 import os
+import json
 import sys
 
 logger = logging.getLogger("argparser")
@@ -62,6 +64,8 @@ class SnakefaceParser:
         """Load is a wrapper around set - we loop through a dictionary and set all
         arguments.
         """
+        if isinstance(argdict, str):
+            argdict = json.loads(argdict)
         for key, value in argdict.items():
             arg = self._args.get(key)
             if arg:
@@ -128,6 +132,10 @@ class SnakefaceParser:
             # Define choices
             if action.dest == "snakefile":
                 lookup[action.dest].update_choice_fields({"snakefile": self.snakefiles})
+
+            # Set the wms monitor to be this server
+            if action.dest == "wms_monitor":
+                lookup[action.dest].value = settings.DOMAIN_NAME
 
         # This top level organizes into groups
         for group in self.parser._action_groups:
@@ -246,7 +254,7 @@ class SnakefaceArgument:
 
         return self.text_template.render(
             name=self.action["dest"],
-            default=self.action["default"] or "",
+            default=self.action["default"] or self.value,
             label=self.field_name,
             help=self.action["help"],
         )

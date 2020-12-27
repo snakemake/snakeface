@@ -4,7 +4,6 @@ __license__ = "MPL 2.0"
 
 from snakeface.apps.users.models import User
 from snakeface.apps.users.utils import get_notebook_token, get_or_create_notebook_user
-from snakeface.apps.main.models import Collection
 from snakeface.settings import (
     VIEW_RATE_LIMIT as rl_rate,
     VIEW_RATE_LIMIT_BLOCK as rl_block,

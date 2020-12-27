@@ -21,19 +21,19 @@ INSTALL_REQUIRES = (
     ("Django", {"exact_version": "3.0.8"}),
     ("django-q", {"exact_version": "1.3.4"}),
     ("django-crispy-forms", {"exact_version": "1.10.0"}),
-    ("django-taggit", {"min_version": "1.3.0"}),
-    ("django-gravatar", {"min_version": "1.4.4"}),
-    ("django-ratelimit", {"min_version": "3.0.0"}),
-    ("django-extensions", {"min_version": "3.0.2"}),
+    ("django-taggit", {"exact_version": "1.3.0"}),
+    ("django-gravatar", {"exact_version": "1.4.4"}),
+    ("django-ratelimit", {"exact_version": "3.0.0"}),
+    ("django-extensions", {"exact_version": "3.0.2"}),
+    ("djangorestframework", {"exact_version": "3.11.1"}),
+    ("drf-yasg", {"exact_version": "1.20.0"}),
 )
 
 # Dependencies provided by snakemake: pyYaml, jinja2
 
 EMAIL_REQUIRES = (("sendgrid", {"min_version": "6.4.3"}),)
 POSTGRES_REQUIRES = (("psycopg2-binary", {"min_version": "2.8.5"}),)
-API_REQUIRES = (("djangorestframework", {"min_version": "3.11.1"}),)
-
 
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
 
-ALL_REQUIRES = INSTALL_REQUIRES + EMAIL_REQUIRES + POSTGRES_REQUIRES + API_REQUIRES
+ALL_REQUIRES = INSTALL_REQUIRES + EMAIL_REQUIRES + POSTGRES_REQUIRES

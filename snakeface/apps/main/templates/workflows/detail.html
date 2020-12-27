@@ -20,18 +20,27 @@ code {
            <div class="card-body">
            <table class="tablesorter table table-striped" width="100%">
               <tbody>
-                   <tr>
+                   {% if workflow.snakefile %}<tr>
                       <td>Snakefile</td>
                       <td>{{ workflow.snakefile }}</td>
-                   </tr>
-                   <tr>
+                   </tr>{% endif %}
+                   {% if workflow.workdir %}<tr>
                       <td>Workdir</td>
                       <td>{{ workflow.workdir }}</td>
-                   </tr>
-                   <tr>
+                   </tr>{% endif %}
+                   {% if workflow.command %}<tr>
                       <td>Command</td>
                       <td><code>{{ workflow.command }}</code></td>
+                   </tr>{% endif %}
+                   {% if request.user.is_authenticated and request.user in workflow.owners.all %}<tr>
+                      <td>WMS_MONITOR_TOKEN</td>
+                      <td><code>{{ request.user.token }}</code></td>
                    </tr>
+                   <tr>
+                      <td>Command Line Interaction</td>
+                      <td><p>To interact with this workflow from the command line, export this variable and provide the following extra arguments</p> <br><br>
+<code>--wms-monitor {{ DOMAIN }} --wms-monitor-arg id={{ workflow.id }}</code></td>
+                   </tr>{% endif %}
               </tbody>
            </table>              
            </div>
@@ -39,17 +48,17 @@ code {
     </div>
 </div>
 
-{% if workflow.dag %}<div class="row">
+{% if workflow.dag or workflow.workflowstatus_set.count > 0 %}<div class="row">
     <div class="col">
         <div class="card">
            <div class="card-body">
                <div class="row">
-                   <div class="col-md-6">
+                   {% if workflow.dag %}<div class="col-md-6">
                    {{ workflow.dag | safe }}
-                   </div>
-                   <div class="col-md-6">
+                   </div>{% endif %}
+                   {% if workflow.workflowstatus_set.count > 0 %}<div class="col-md-6">
                    {% include "workflows/workflow_run_table.html" %}
-                   </div>
+                   </div>{% endif %}
                </div>
            </div>
         </div>

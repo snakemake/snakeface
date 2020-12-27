@@ -42,6 +42,16 @@ DISABLE_SINGULARITY: null
 DISABLE_CONDA: null
 DISABLE_NOTEBOOKS: true
 
+# Global server settings
+ENVIRONMENT: test
+HELP_CONTACT_EMAIL: null
+HELP_CONTACT_URL: https://github.com/snakemake/snakeface/issues
+SENDGRID_API_KEY: null
+SENDGRID_SENDER_EMAIL: null
+DOMAIN_NAME: http://127.0.0.1
+DOMAIN_PORT: 5000
+REQUIRE_AUTH: true
+
 # Set a default profile (see https://github.com/snakemake-profiles)
 PROFILE: null
 
@@ -59,10 +69,3 @@ PLUGIN_API_ENABLED: null
 PLUGIN_LDAP_AUTH_ENABLED: null
 PLUGIN_PAM_AUTH_ENABLED: null
 PLUGIN_SAML_AUTH_ENABLED: null
-
-# SendGrid and Help Contact Email
-HELP_CONTACT_EMAIL: null
-SENDGRID_API_KEY: null
-SENDGRID_SENDER_EMAIL: null
-
-DOMAIN_NAME: http://127.0.0.1:8000

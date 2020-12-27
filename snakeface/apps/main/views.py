@@ -20,8 +20,8 @@ from ratelimit.mixins import RatelimitMixin
 from ratelimit.decorators import ratelimit
 from snakeface.argparser import SnakefaceParser
 from snakeface.settings import cfg
-from snakeface.apps.main.models import Collection, Workflow
-from snakeface.apps.main.forms import CollectionForm, WorkflowForm
+from snakeface.apps.main.models import Workflow
+from snakeface.apps.main.forms import WorkflowForm
 from snakeface.apps.users.decorators import login_is_required
 from snakeface.settings import (
     VIEW_RATE_LIMIT as rl_rate,
@@ -35,13 +35,13 @@ from snakeface.settings import (
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def index(request):
-    collections = None
+    workflows = None
     if request.user.is_authenticated:
-        collections = Collection.objects.filter(owners=request.user)
+        workflows = Workflow.objects.filter(owners=request.user)
     return render(
         request,
         "main/index.html",
-        {"collections": collections, "page_title": "Dashboard"},
+        {"workflows": workflows, "page_title": "Dashboard"},
     )
 
 
@@ -54,6 +54,10 @@ def edit_workflow(request, wid):
 
     workflow = get_object_or_404(Workflow, pk=wid)
 
+    # Ensure that the user is an owner
+    if request.user not in workflow.owners.all():
+        return HttpResponseForbidden()
+
     # Give a warning if the snakefile doesn't exist
     if not os.path.exists(workflow.snakefile):
         messages.warning(
@@ -63,39 +67,50 @@ def edit_workflow(request, wid):
     # Create and update a parser with the current settings
     parser = SnakefaceParser()
     parser.load(workflow.data)
-    return edit_or_update_workflow(
-        request, workflow=workflow, collection=workflow.collection, parser=parser
-    )
+    return edit_or_update_workflow(request, workflow=workflow, parser=parser)
 
 
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def new_workflow(request, cid):
+def new_workflow(request):
     parser = SnakefaceParser()
-    collection = get_object_or_404(Collection, pk=cid)
-    return edit_or_update_workflow(request, collection=collection, parser=parser)
+    if request.user.is_authenticated:
+        return edit_or_update_workflow(request, parser=parser)
+    return HttpResponseForbidden()
 
 
-def edit_or_update_workflow(request, collection, parser, workflow=None):
+def edit_or_update_workflow(request, parser, workflow=None):
     """A shared function to edit or update an existing workflow."""
-    action = "update"
-    if not workflow:
+
+    # Ensure the user has permission to update
+    if workflow:
+        existed = True
+        action = "update"
+        if request.user not in workflow.owners.all():
+            return HttpResponseForbidden()
+    else:
+        workflow = Workflow()
         action = "create"
+        existed = False
+
+    form = WorkflowForm(request.POST or None, instance=workflow)
 
     # Case 1: parse a provided form to update current data
-    if request.method == "POST":
+    if request.method == "POST" and form.is_valid():
+
         for arg, setting in request.POST.items():
             parser.set(arg, setting)
-
         if not parser.validate():
             message.error(request, parser.errors)
         else:
-            if not workflow:
-                workflow = Workflow()
+            workflow = form.save()
             workflow.data = parser.to_dict()
             workflow.snakefile = parser.snakefile
             workflow.workdir = request.POST.get("workdirs", cfg.WORKDIR)
-            workflow.collection = collection
+            workflow.private = (
+                True if cfg.PRIVATE_ONLY else request.POST.get("private", 1) == 1
+            )
+            workflow.owners.add(request.user)
             # Save updates the dag and command
             workflow.save()
             return redirect("main:view_workflow", wid=workflow.id)
@@ -110,17 +125,16 @@ def edit_or_update_workflow(request, collection, parser, workflow=None):
         return redirect("main:view_collection", cid=workflow.collection.id)
 
     # Case 3: Render an empty form with current working directory
-    form = WorkflowForm()
-    if workflow:
-        form = WorkflowForm(workdirs=workflow.workdir)
+    if existed:
+        form.fields["workdirs"].initial = workflow.workdir
     return render(
         request,
         "workflows/new.html",
         {
             "groups": parser.groups,
-            "page_title": "New Workflow",
+            "page_title": "%s Workflow" % action.capitalize(),
             "form": form,
-            "collection": collection,
+            "workflow_id": getattr(workflow, "id", None),
         },
     )
 
@@ -145,56 +159,6 @@ def view_workflow(request, wid):
         "workflows/detail.html",
         {
             "workflow": workflow,
-            "page_title": "%s: %s" % (workflow.collection.name, workflow.id),
+            "page_title": "%s: %s" % (workflow.name or "Workflow", workflow.id),
         },
-    )
-
-
-# Collections
-
-
-@login_is_required
-@ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def edit_collection(request, cid=None):
-    """Create a new collection, or edit an existing one. If a cid is provided,
-    the view serves to update an existing collection.
-    """
-    collection = Collection()
-    form = CollectionForm()
-    exists = False
-
-    if cid:
-        collection = get_object_or_404(Collection, pk=cid)
-        exists = True
-        if request.user not in collection.owners.all():
-            return HttpResponseForbidden()
-
-    # Allow view to be used to also update
-    form = CollectionForm(request.POST or None, instance=collection)
-    page_title = "Edit collection" if exists else "New collection"
-
-    if request.method == "POST" and form.is_valid():
-        collection = form.save()
-        collection.owners.add(request.user)
-        collection.save()
-        message = "Your collection %s has been %s." % (
-            collection.name,
-            "updated" if exists else "created",
-        )
-        messages.info(request, message)
-        return redirect("main:view_collection", cid=collection.id)
-
-    return render(
-        request, "collections/new.html", {"form": form, "page_title": page_title}
-    )
-
-
-@login_is_required
-@ratelimit(key="ip", rate=rl_rate, block=rl_block)
-def view_collection(request, cid):
-    collection = get_object_or_404(Collection, pk=cid)
-    return render(
-        request,
-        "collections/detail.html",
-        {"collection": collection, "page_title": collection.name},
     )

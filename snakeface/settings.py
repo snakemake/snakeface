@@ -9,6 +9,7 @@ import sys
 
 from django.core.management.utils import get_random_secret_key
 from snakeface.apps.users.utils import get_username
+from datetime import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +27,7 @@ class Settings:
     def __init__(self, dictionary):
         for key, value in dictionary.items():
             setattr(self, key, value)
+        setattr(self, "UPDATED_AT", datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
 
     def __str__(self):
         return "[snakeface-settings]"
@@ -71,12 +73,16 @@ if not SECRET_KEY:
 # Private only should be a boolean
 cfg.PRIVATE_ONLY = cfg.PRIVATE_ONLY is not None
 
+# Set the domain name
+DOMAIN_NAME = cfg.DOMAIN_NAME
+if cfg.DOMAIN_PORT:
+    DOMAIN_NAME = "%s:%s" % (DOMAIN_NAME, cfg.DOMAIN_PORT)
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") != "false" else False
 
 # Derive list of plugins enabled from the environment
 PLUGINS_LOOKUP = {
-    "api": False,
     "ldap_auth": False,
     "pam_auth": False,
     "saml_auth": False,
@@ -113,6 +119,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "snakeface.apps.base",
+    "snakeface.apps.api",
     "snakeface.apps.main",
     "snakeface.apps.users",
     "django.contrib.admin",
@@ -127,6 +134,8 @@ INSTALLED_APPS = [
     "social_django",
     "django_gravatar",
     "django_q",
+    "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 
@@ -328,9 +337,6 @@ if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
 
 
 ## PLUGINS #####################################################################
-if "api" in PLUGINS_ENABLED:
-    INSTALLED_APPS += ["rest_framework", "rest_framework.authtoken"]
-#       "rest_framework_swagger"]
 
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:

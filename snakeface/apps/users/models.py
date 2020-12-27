@@ -73,6 +73,11 @@ class User(AbstractUser):
     class Meta:
         app_label = "users"
 
+    @property
+    def token(self):
+        """The user token is for interaction with creating and updating workflows"""
+        return str(Token.objects.get(user=self))
+
     def has_create_permission(self):
         """has create permission determines if the user (globally) can create
         new collections. By default, superusers and admin can, along with

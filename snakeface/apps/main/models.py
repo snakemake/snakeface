@@ -4,7 +4,7 @@ __license__ = "MPL 2.0"
 
 from django.core.exceptions import FieldError
 from django.db.models import Q
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_init
 from django.db import models
 from django.apps import apps
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -16,7 +16,6 @@ from django.conf import settings
 from django.urls import reverse
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from taggit.managers import TaggableManager
 from django.contrib.postgres.fields import (
     JSONField as DjangoJSONField,
     ArrayField as DjangoArrayField,
@@ -82,6 +81,7 @@ class Workflow(models.Model):
         blank=False,
         null=False,
     )
+    name = models.CharField(max_length=250, unique=True, blank=True, null=True)
     data = JSONField(blank=False, null=False, default="{}")
     dag = models.TextField(blank=True, null=True)
     command = models.TextField(blank=False, null=False)
@@ -90,9 +90,37 @@ class Workflow(models.Model):
     snakemake_id = models.TextField(blank=False, null=False)
     add_date = models.DateTimeField("date published", auto_now_add=True)
     modify_date = models.DateTimeField("date modified", auto_now=True)
-    collection = models.ForeignKey(
-        "main.Collection", null=False, blank=False, on_delete=models.CASCADE
+    owners = models.ManyToManyField(
+        "users.User",
+        blank=True,
+        default=None,
+        related_name="workflow_owners",
+        related_query_name="owners",
     )
+    contributors = models.ManyToManyField(
+        "users.User",
+        related_name="workflow_contributors",
+        related_query_name="contributor",
+        blank=True,
+        help_text="users with edit permission to the workflow",
+        verbose_name="Contributors",
+    )
+
+    def get_absolute_url(self):
+        return_cid = self.id
+        return reverse("workflow_details", args=[str(return_cid)])
+
+    # By default, collections are public
+    private = models.BooleanField(
+        choices=PRIVACY_CHOICES,
+        default=cfg.PRIVATE_ONLY,
+        verbose_name="Accessibility",
+    )
+
+    def has_view_permission(self):
+        if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
+            return True
+        return (self.private and self.request.user in self.members) or not self.private
 
     def update_command(self, command=None, do_save=False):
         """Given a command (or an automated save from the signal) update
@@ -132,74 +160,11 @@ class Workflow(models.Model):
             if do_save:
                 self.save()
 
-
-## TODO: need to add functionality here so a run is associated with an executor
-class WorkflowRun(models.Model):
-    """A workflow run is a result for running a workflow."""
-
-    executor = models.TextField(null=False, blank=False)
-    add_date = models.DateTimeField("date published", auto_now_add=True)
-    modify_date = models.DateTimeField("date modified", auto_now=True)
-    workflow = models.ForeignKey(
-        "main.Workflow", null=False, blank=False, on_delete=models.CASCADE
-    )
-
-
-class Report(models.Model):
-    """A report holds a report for a workflow."""
-
-    workflow_run = models.ForeignKey(
-        "main.WorkflowRun", null=False, blank=False, on_delete=models.CASCADE
-    )
-
-
-class Collection(models.Model):
-    """A collection is a group of workflows owned by one or more users"""
-
-    owners = models.ManyToManyField(
-        "users.User",
-        blank=True,
-        default=None,
-        related_name="collection_owners",
-        related_query_name="owners",
-    )
-
-    contributors = models.ManyToManyField(
-        "users.User",
-        related_name="collection_contributors",
-        related_query_name="contributor",
-        blank=True,
-        help_text="users with edit permission to the collection",
-        verbose_name="Contributors",
-    )
-    name = models.CharField(
-        max_length=250,
-        unique=True,
-        blank=False,
-        null=False,
-    )
-    add_date = models.DateTimeField("date published", auto_now_add=True)
-    modify_date = models.DateTimeField("date modified", auto_now=True)
-    # metadata = JSONField(default=dict)
-    # tags = TaggableManager()
-    # TODO: Add interaction limits
-
-    # By default, collections are public
-    private = models.BooleanField(
-        choices=PRIVACY_CHOICES,
-        default=cfg.PRIVATE_ONLY,
-        verbose_name="Accessibility",
-    )
-
-    def get_absolute_url(self):
-        return_cid = self.id
-        return reverse("collection_details", args=[str(return_cid)])
-
     def __str__(self):
-        return "[collection:%s]" % self.name
+        return "[workflow:%s]" % self.name
 
     def get_label(self):
-        return "collection"
+        return "workflow"
 
     @property
     def members(self):
@@ -217,13 +182,28 @@ class Collection(models.Model):
             and self.private
         )
 
-    def has_view_permission(self):
-        if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
-            return True
-        return (self.private and self.request.user in self.members) or not self.private
-
     class Meta:
         app_label = "main"
+
+
+class WorkflowStatus(models.Model):
+    """A workflow status is a status message send from running a workflow"""
+
+    # executor = models.TextField(null=False, blank=False)
+    add_date = models.DateTimeField("date published", auto_now_add=True)
+    modify_date = models.DateTimeField("date modified", auto_now=True)
+    msg = JSONField(blank=False, null=False, default="{}")
+    workflow = models.ForeignKey(
+        "main.Workflow", null=False, blank=False, on_delete=models.CASCADE
+    )
+
+
+class Report(models.Model):
+    """A report holds a report for a workflow."""
+
+    workflow_run = models.ForeignKey(
+        "main.Workflow", null=False, blank=False, on_delete=models.CASCADE
+    )
 
 
 def update_workflow(sender, instance, **kwargs):

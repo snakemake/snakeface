@@ -10,7 +10,7 @@ def globals(request):
     """Returns a dict of defaults to be used by templates, if configured
     correcty in the settings.py file."""
     return {
-        "DOMAIN": settings.cfg.DOMAIN_NAME,
+        "DOMAIN": settings.DOMAIN_NAME,
         "NOTEBOOK": settings.cfg.NOTEBOOK,
         "TWITTER_USERNAME": settings.cfg.TWITTER_USERNAME,
         "GITHUB_REPOSITORY": settings.cfg.GITHUB_REPOSITORY,

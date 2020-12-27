@@ -76,7 +76,6 @@ if __name__ == "__main__":
     ALL_REQUIRES = get_reqs(lookup, "ALL_REQUIRES")
     INSTALL_EMAIL_REQUIRES = get_reqs(lookup, "EMAIL_REQUIRES")
     INSTALL_POSTGRES_REQUIRES = get_reqs(lookup, "POSTGRES_REQUIRES")
-    INSTALL_API_REQUIRES = get_reqs(lookup, "API_REQUIRES")
 
     setup(
         name=NAME,
@@ -99,6 +98,8 @@ if __name__ == "__main__":
         tests_require=TESTS_REQUIRES,
         extras_require={
             "all": ALL_REQUIRES,
+            "email": INSTALL_EMAIL_REQUIRES,
+            "postgres": INSTALL_POSTGRES_REQUIRES,
         },
         classifiers=[
             "Intended Audience :: Science/Research",

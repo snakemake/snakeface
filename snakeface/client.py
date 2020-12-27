@@ -58,7 +58,7 @@ def get_parser():
 
     network_group = parser.add_argument_group("NETWORKING")
     network_group.add_argument(
-        "--port", dest="port", help="Port to serve application on.", default=5555
+        "--port", dest="port", help="Port to serve application on.", default=5000
     )
 
     # Logging
