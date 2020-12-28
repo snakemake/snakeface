@@ -25,3 +25,17 @@ btn {
     top: 36% !important;
     right: 25px !important;
 }
+
+/* Data tables */
+
+table.dataTable thead th, table.dataTable thead td {
+    border-bottom: 1px solid #CCC !important;
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+    width: 45px !important;
+}
+
+table.dataTable.no-footer {
+    border-bottom: 1px solid #CCC !important;
+}

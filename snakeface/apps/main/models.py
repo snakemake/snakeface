@@ -9,7 +9,7 @@ from django.db import models
 from django.apps import apps
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.timesince import timesince
 
 
 from django.conf import settings
@@ -75,12 +75,6 @@ class Workflow(models.Model):
     workflow runs.
     """
 
-    repository = models.CharField(
-        max_length=250,
-        unique=True,
-        blank=False,
-        null=False,
-    )
     name = models.CharField(max_length=250, unique=True, blank=True, null=True)
     data = JSONField(blank=False, null=False, default="{}")
     dag = models.TextField(blank=True, null=True)
@@ -116,6 +110,13 @@ class Workflow(models.Model):
         default=cfg.PRIVATE_ONLY,
         verbose_name="Accessibility",
     )
+
+    @property
+    def message_fields(self):
+        fields = set()
+        for status in self.workflowstatus_set.all():
+            [fields.add(x) for x in status.msg]
+        return fields
 
     def has_view_permission(self):
         if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:

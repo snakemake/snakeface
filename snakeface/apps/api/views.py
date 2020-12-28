@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .permissions import check_user_authentication
 
+import json
+
 
 class ServiceInfo(RatelimitMixin, APIView):
     """Return a 200 response to indicate a running service. Note that we are
@@ -86,15 +88,14 @@ class CreateWorkflow(RatelimitMixin, APIView):
         # If we don't have a workflow, create one
         if not workflow:
 
-            # TODO what other metadata can snakemake pass here?
-            # snakefile
-            # workdir
-            # snakemake_id
-            # name?
-            workflow = Workflow()
+            # Add additional metadata to creation
+            snakefile = request.POST.get("snakefile")
+            workdir = request.POST.get("workdir")
+            command = request.POST.get("command")
+            workflow = Workflow(snakefile=snakefile, workdir=workdir, command=command)
+            workflow.save()
             if user:
                 workflow.owners.add(user)
-            workflow.save()
 
         data = {"id": workflow.id}
         return Response(status=200, data=data)
@@ -127,8 +128,9 @@ class UpdateWorkflow(RatelimitMixin, APIView):
             if workflow and user not in workflow.owners.all():
                 return Response(403)
 
+        # The message should be json dump of attributes
+        message = json.loads(request.POST.get("msg", {}))
+
         # Update the workflow with a new status message
-        workflow_status = WorkflowStatus.objects.create(
-            workflow=workflow, msg=request.POST.get("msg", {})
-        )
+        workflow_status = WorkflowStatus.objects.create(workflow=workflow, msg=message)
         return Response(status=200, data={})

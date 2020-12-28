@@ -1,31 +1,41 @@
+{% load my_filters %}
 {% if workflow.workflowstatus_set.count > 0 %}<div class="row">
     <div class="col">
         <div class="card">
            <div class="card-body">
-             <table id="taskTable" class="tablesorter table table-striped" width="100%">
+             {% with fields=workflow.message_fields %}
+             <table id="taskTable" class="table table-striped table-bordered compact" width="100%">
                <thead>
                     <tr>
-                       <th class="text-nowrap" width="30%">Name</th>
-                       <th width="35%">Executor</th>
+                       <th>Order</th>
+                       {% for field in fields %}
+                       <th>{{ field }}</th>{% endfor %}
                    </tr>
               </thead>
               <tbody>{% for status in workflow.workflowstatus_set.all %}
-                   <tr>
-                      <td>{{ status.msg }}</td>
-                      <td></td>
+                   <tr><td>{{ forloop.counter }}</td>
+                      {% for field in fields %}
+                      {% if field == "level" %}
+                         {% with level=status.msg|lookup:field %}
+                         {% include "fields/level.html" %}
+                         {% endwith %}
+                      {% else %}
+                        {% if field in status.msg %}<td>{{ status.msg|lookup:field }}</td>{% else %}<td></td>{% endif %}
+                      {% endif %}{% endfor %}
                    </tr>
               {% endfor %}</tbody>
-              </table>{% endif %}
-               {% if workflow.workflowrun_set.count > 0 %}<div class="card-footer ">
-                  <div class="legend">
+              </table>
+              {% endwith %}
+              <div class="card-footer">
+                  <!--<div class="legend">
                      <i class="fa fa-circle text-success"></i> Completed
                      <i class="fa fa-circle text-info"></i> Running
                      <i class="fa fa-circle text-danger"></i> Error
                      <i class="fa fa-circle text-warning"></i> Warning
-                  </div>
+                  </div>-->
                   <hr>
                   <div class="stats">
-                  <i class="fa fa-history"></i> Updated 3 minutes ago
+                  <i class="fa fa-history"></i> Last updated {{ workflow.workflowstatus_set.all.last.modify_date|timesince }} ago.
                  </div>
            </div>
         </div>
