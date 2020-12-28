@@ -28,6 +28,14 @@ and here is the start of creating a workflow:
 
 ![docs/images/new_workflow.png](docs/images/new_workflow.png)
 
+and after creation:
+
+![docs/images/workflow-detail.png](docs/images/workflow-detail.png)
+
+and the dashboard with more than one workflow.
+
+![docs/images/dashboard.png](docs/images/dashboard.png)
+
 **under development**
 
 ## Thanks
