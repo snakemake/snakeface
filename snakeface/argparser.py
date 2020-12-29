@@ -89,20 +89,29 @@ class SnakefaceParser:
 
     def validate(self):
         """ensure that all required args are defined"""
-        required = ["cores", "snakefile"]
         valid = True
-        for key in required:
+        for key in self.required:
             if not self._args.get(key):
                 self._errors.append("The %s is required." % key)
                 valid = False
         return valid
 
     @property
+    def required(self):
+        return ["cores", "snakefile"]
+
+    @property
     def command(self):
         """Given a loaded set of arguments, generate the command."""
         command = "snakemake"
+
         for name, arg in self._args.items():
             if arg.value:
+
+                # If the value is set to the default, ignore it
+                if arg.value == arg.action["default"] and name not in self.required:
+                    continue
+
                 flag = ""
                 if arg.action["option_strings"]:
                     flag = arg.action["option_strings"][0]
@@ -127,7 +136,9 @@ class SnakefaceParser:
         # Generate an argument lookup based on dest
         lookup = {}
         for action in self.parser._actions:
-            lookup[action.dest] = SnakefaceArgument(action)
+            lookup[action.dest] = SnakefaceArgument(
+                action, action.dest in self.required
+            )
 
             # Define choices
             if action.dest == "snakefile":
@@ -188,13 +199,14 @@ class SnakefaceArgument:
     easily generate front end views (e.g., a form element) for it
     """
 
-    def __init__(self, action):
+    def __init__(self, action, required=False):
         self.action = action.__dict__
         self.boolean_template = ""
         self.text_template = ""
         self.choice_template = ""
         self.choice_fields = {}
         self.value = ""
+        self.required = required
 
     def __str__(self):
         return self.action["dest"]
@@ -243,6 +255,7 @@ class SnakefaceArgument:
             help=self.action["help"],
             name=self.action["dest"],
             checked=checked,
+            required="required" if self.required else "",
         )
 
     def text_field(self):
@@ -257,6 +270,7 @@ class SnakefaceArgument:
             default=self.action["default"] or self.value,
             label=self.field_name,
             help=self.action["help"],
+            required="required" if self.required else "",
         )
 
     def choice_field(self):
@@ -271,5 +285,6 @@ class SnakefaceArgument:
             name=self.action["dest"],
             label=self.field_name,
             help=self.action["help"],
+            required="required" if self.required else "",
             choices=self.choice_fields.get(self.action["dest"]),
         )

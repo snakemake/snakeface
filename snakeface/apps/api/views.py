@@ -72,9 +72,6 @@ class CreateWorkflow(RatelimitMixin, APIView):
         if workflow:
             workflow = get_object_or_404(Workflow, pk=workflow)
 
-            # Remove old statuses here
-            workflow.workflowstatus_set.all().delete()
-
         # Does the server require authentication?
         if cfg.REQUIRE_AUTH:
             user, response_code = check_user_authentication(request)
@@ -86,8 +83,12 @@ class CreateWorkflow(RatelimitMixin, APIView):
                 return Response(status=403)
 
         # If we don't have a workflow, create one
-        if not workflow:
+        if workflow:
 
+            # Remove old statuses here
+            workflow.workflowstatus_set.all().delete()
+
+        else:
             # Add additional metadata to creation
             snakefile = request.POST.get("snakefile")
             workdir = request.POST.get("workdir")

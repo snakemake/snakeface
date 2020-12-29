@@ -7,6 +7,7 @@ from django.http import StreamingHttpResponse
 from snakeface.settings import cfg
 import subprocess
 import threading
+import ctypes
 
 import tempfile
 import os
@@ -66,6 +67,47 @@ def get_tmpfile(prefix="", suffix=""):
     return tmp_file
 
 
+class ThreadRunner(threading.Thread):
+    """We need to be able to run a Snakemake job as a thread, and kill it if
+    an exception is raised based on it's id
+    """
+
+    def set_workflow(self, workflow):
+        self.workflow = workflow
+
+    #    def run(self):
+    #
+    # target function of the thread class
+    ##        try:
+    #            while True:
+    #                print('running ' + self.name)
+    #        finally:
+    #            print('ended')
+
+    @property
+    def thread_id(self):
+        """Return the id of the thread, either attributed to the class or
+        by matching the Thread instance
+        """
+        if hasattr(self, "_thread_id"):
+            return self._thread_id
+        for thread_id, thread in threading._active.items():
+            if thread is self:
+                return thread_id
+
+    def stop_workflow(self):
+        """Stop the workflow from running given the thread id"""
+        thread_id = self.thread_id
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(
+            thread_id, ctypes.py_object(SystemExit)
+        )
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print("Failed to stop thread %s" % thread_id)
+        self.workflow.status = "NOTRUNNING"
+        self.workflow.save()
+
+
 class CommandRunner(object):
     """Wrapper to use subprocess to run a command. This is based off of pypi
     vendor distlib SubprocesMixin.
@@ -92,10 +134,18 @@ class CommandRunner(object):
             lines.append(s.decode("utf-8"))
         stream.close()
 
-    def run_command(self, cmd, **kwargs):
+    def run_command(self, cmd, env=None, **kwargs):
         self.reset()
+
+        # If we need to update the environment
+        # **IMPORTANT: this will include envars from host. Absolutely cannot
+        # be any secrets (they should be defined in the app settings file)
+        envars = os.environ.copy()
+        if env:
+            envars.update(env)
+
         p = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=envars, **kwargs
         )
 
         # Create threads for error and output

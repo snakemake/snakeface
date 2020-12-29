@@ -22,6 +22,7 @@ from snakeface.argparser import SnakefaceParser
 from snakeface.settings import cfg
 from snakeface.apps.main.models import Workflow
 from snakeface.apps.main.forms import WorkflowForm
+from snakeface.apps.main.tasks import run_workflow
 from snakeface.apps.users.decorators import login_is_required
 from snakeface.settings import (
     VIEW_RATE_LIMIT as rl_rate,
@@ -113,7 +114,7 @@ def edit_or_update_workflow(request, parser, workflow=None):
             workflow.owners.add(request.user)
             # Save updates the dag and command
             workflow.save()
-            return redirect("main:view_workflow", wid=workflow.id)
+            return run_workflow(request=request, wid=workflow.id, uid=request.user.id)
 
     # Case 2: no snakefiles:
     if not parser.snakefiles:
@@ -122,7 +123,7 @@ def edit_or_update_workflow(request, parser, workflow=None):
             " You must have one to %s a workflow." % (cfg.WORKDIR, action)
         )
         messages.info(request, message)
-        return redirect("main:view_collection", cid=workflow.collection.id)
+        return redirect("main:dashboard")
 
     # Case 3: Render an empty form with current working directory
     if existed:

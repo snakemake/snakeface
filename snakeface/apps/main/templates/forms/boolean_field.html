@@ -1,6 +1,6 @@
     <a href="javascript:void(0)" class="switch-trigger" style="margin-left:0px">
     <label class="switch">
-        <input type="checkbox" data-toggle="switch" {% if checked %}checked{% endif %} name="{{ name }}" data-on-color="primary" data-off-color="primary"><span class="toggle"></span>
+        <input type="checkbox" data-toggle="switch" {% if checked %}checked{% endif %} name="{{ name }}" data-on-color="primary" data-off-color="primary" {{required}}><span class="toggle"></span>
     </label><span style="color:#333">{{ label }}</span>
     <div class="clearfix"></div>
     <small style="color:#333">{{ help }}</small>

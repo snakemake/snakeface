@@ -70,20 +70,30 @@ if "sqlite" in settings.DATABASES["default"]["ENGINE"]:
             return self.value_from_object(obj)
 
 
+RUNNING_CHOICES = [("RUNNING", "RUNNING"), ("NOTRUNNING", "NOTRUNNING")]
+
+
 class Workflow(models.Model):
     """A workflow is associated with a specific git repository and one or more
     workflow runs.
     """
 
-    name = models.CharField(max_length=250, unique=True, blank=True, null=True)
+    add_date = models.DateTimeField("date published", auto_now_add=True)
+    command = models.TextField(blank=False, null=False)
     data = JSONField(blank=False, null=False, default="{}")
     dag = models.TextField(blank=True, null=True)
-    command = models.TextField(blank=False, null=False)
-    snakefile = models.TextField(blank=False, null=False, max_length=250)
-    workdir = models.TextField(blank=False, null=False, max_length=250)
-    snakemake_id = models.TextField(blank=False, null=False)
-    add_date = models.DateTimeField("date published", auto_now_add=True)
+    error = models.TextField(blank=True, null=True)
+    output = models.TextField(blank=True, null=True)
     modify_date = models.DateTimeField("date modified", auto_now=True)
+    name = models.CharField(max_length=250, unique=True, blank=True, null=True)
+    snakefile = models.TextField(blank=False, null=False, max_length=250)
+    snakemake_id = models.TextField(blank=False, null=False)
+    status = models.TextField(
+        choices=RUNNING_CHOICES, default="NOTRUNNING", blank=False, null=False
+    )
+    thread = models.PositiveIntegerField(default=None, blank=True, null=True)
+    workdir = models.TextField(blank=False, null=False, max_length=250)
+
     owners = models.ManyToManyField(
         "users.User",
         blank=True,
@@ -132,7 +142,7 @@ class Workflow(models.Model):
         else:
             parser = SnakefaceParser()
             parser.load(self.data)
-            self.command = parser.command
+            self.command = parser.command + " --wms-monitor-arg id=%s" % self.id
         if do_save:
             self.save()
 

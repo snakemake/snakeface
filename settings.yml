@@ -30,6 +30,9 @@ USER_WORKFLOW_GLOBAL_RUNS_LIMIT: 1000
 # Only allow notebooks, set to non null (disables all other auth)
 NOTEBOOK_ONLY: null
 
+# Maximum number of jobs to allow running at once
+MAXIMUM_NOTEBOOK_JOBS: 2
+
 # Executors (set to non null to enable, use profile if needed), local set by default
 EXECUTOR_CLUSTER: null
 EXECUTOR_GOOGLE_LIFE_SCIENCES: null
@@ -54,6 +57,10 @@ REQUIRE_AUTH: true
 
 # Set a default profile (see https://github.com/snakemake-profiles)
 PROFILE: null
+
+# Set any global default arguments
+SNAKEMAKE_ARG_DEFAULTS:
+ - cores: 1
 
 # Workflow collection settings
 PRIVATE_ONLY: null

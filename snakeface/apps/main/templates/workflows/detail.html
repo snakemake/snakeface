@@ -25,6 +25,11 @@ code {
     <div class="col-md-{% if workflow.dag %}8{% else %}12{% endif %}">
         <div class="card">
            <div class="card-body">
+               <div class="row" style="padding-bottom:20px">
+                   <div class="col-md-12">
+                       <a class="btn btn-primary btn-sm" style="float:right" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>
+                   </div>      
+               </div>
            <table class="tablesorter table table-striped" width="100%">
               <tbody>
                    {% if workflow.snakefile %}<tr>
@@ -54,6 +59,19 @@ code {
         </div>
     </div>
 </div>
+
+{% if workflow.error or workflow.output %}<div class="row">
+    <div class="col">
+        <div class="card">
+           <div class="card-body">
+               <div class="row">
+                 {% if workflow.error %}<p class="alert alert-danger" style="width:100%">{{ workflow.error | safe }}</p>{% endif %}
+                 {% if workflow.output %}<p class="alert alert-info" style="width:100%">{{ workflow.output | safe }}</p>{% endif %}
+               </div>
+           </div>
+        </div>
+    </div>
+</div>{% endif %}
 
 {% if workflow.workflowstatus_set.count > 0 %}<div class="row">
     <div class="col">
