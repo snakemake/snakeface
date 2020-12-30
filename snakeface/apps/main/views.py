@@ -152,6 +152,37 @@ def workflow_command(request):
 
 
 @login_is_required
+def workflow_statuses(request, wid):
+    """return serialized workflow statuses for the details view."""
+    workflow = get_object_or_404(Workflow, pk=wid)
+    levels = {
+        "debug": "primary",
+        "dag_debug": "primary",
+        "info": "info",
+        "warning": "warning",
+        "error": "danger",
+    }
+    data = []
+    for i, status in enumerate(workflow.workflowstatus_set.all()):
+        entry = status.msg
+        level = levels.get(entry.get("level"), "secondary")
+        badge = "<span class='badge badge-%s'>%s</span>" % (
+            level,
+            entry.get("level", "info"),
+        )
+        entry.update(
+            {
+                "order": i,
+                "job": entry.get("job", ""),
+                "msg": entry.get("msg", ""),
+                "level": badge,
+            }
+        )
+        data.append(entry)
+    return JsonResponse({"data": data})
+
+
+@login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_workflow(request, wid):
     workflow = get_object_or_404(Workflow, pk=wid)

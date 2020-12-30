@@ -11,6 +11,14 @@ code {
     max-width: 1400px;
     padding: 10px;
 }
+
+td.details-control {
+    background: url("{% static 'img/details_open.png' %}") no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url("{% static 'img/details_close.png' %}") no-repeat center center;
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -90,8 +98,53 @@ code {
 {% endblock %}
 {% block scripts %}
 <script>
-$(document).ready(function(){
-   {% if workflow.workflowstatus_set.count > 0 %}$("#taskTable").DataTable({"pageLength": 25});{% endif %}
+$(document).ready(function() {
+
+{% if workflow.workflowstatus_set.count > 0 %}
+function format (d) {
+    var row = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'
+    $.each(d, function(i, n){
+        if ((n!="") && (i!='level')) {
+            row = row + "<tr style='width:100%'><td>" + i + "</td><td>" + n + "</td></tr>"
+        }
+    });
+    return row + '</table>';
+}
+
+    var table = $('#taskTable').DataTable( {
+        "ajax": "{% url 'main:workflow_statuses' workflow.id  %}",
+        "pageLength": 25,
+        "columns": [
+            {
+                "className":      'details-control',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ''
+            },
+            { "data": "order" },
+            { "data": "level" },
+            { "data": "job" },
+            { "data": "msg" }
+        ],
+        "order": [[1, 'asc']]
+    } );
+     
+    // Add event listener for opening and closing details
+    $('#taskTable tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+ 
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    });{% endif %}
 });
 </script>
 {% endblock %}
