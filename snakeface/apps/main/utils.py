@@ -75,15 +75,6 @@ class ThreadRunner(threading.Thread):
     def set_workflow(self, workflow):
         self.workflow = workflow
 
-    #    def run(self):
-    #
-    # target function of the thread class
-    ##        try:
-    #            while True:
-    #                print('running ' + self.name)
-    #        finally:
-    #            print('ended')
-
     @property
     def thread_id(self):
         """Return the id of the thread, either attributed to the class or
@@ -119,6 +110,7 @@ class CommandRunner(object):
     def reset(self):
         self.error = []
         self.output = []
+        self.retval = None
 
     def reader(self, stream, context):
         """Get output and error lines and save to command runner."""
@@ -156,4 +148,5 @@ class CommandRunner(object):
         p.wait()
         t1.join()
         t2.join()
+        self.retval = p.returncode
         return self.output

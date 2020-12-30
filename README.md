@@ -38,6 +38,12 @@ and the dashboard with more than one workflow.
 
 **under development**
 
+## TODO:
+
+ - workflow buttons needed: delete, edit workflow
+ - table should be rendered with display none on creation, and then shown when websocket updates with data
+ - remove qcluster, we have threads for notebook 
+
 ## Thanks
 
 Snakeface wouldn't be possible without several open source libraries!

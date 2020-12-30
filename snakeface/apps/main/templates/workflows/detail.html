@@ -52,6 +52,10 @@ tr.shown td.details-control {
                       <td>Command</td>
                       <td><code>{{ workflow.command }}</code></td>
                    </tr>{% endif %}
+                   <tr>
+                      <td>Return Code</td>
+                      <td>{{ workflow.retval }}</td>
+                   </tr>
                    {% if request.user.is_authenticated and request.user in workflow.owners.all %}<tr>
                       <td>WMS_MONITOR_TOKEN</td>
                       <td><code>{{ request.user.token }}</code></td>
@@ -73,8 +77,8 @@ tr.shown td.details-control {
         <div class="card">
            <div class="card-body">
                <div class="row">
-                 {% if workflow.error %}<p class="alert alert-danger" style="width:100%">{{ workflow.error | safe }}</p>{% endif %}
-                 {% if workflow.output %}<p class="alert alert-info" style="width:100%">{{ workflow.output | safe }}</p>{% endif %}
+                 {% if workflow.error %}<p id="workflow-error" class="alert alert-danger" style="width:100%">{{ workflow.error | safe }}</p>{% endif %}
+                 {% if workflow.output %}<p id="workflow-output" class="alert alert-info" style="width:100%">{{ workflow.output | safe }}</p>{% endif %}
                </div>
            </div>
         </div>
@@ -144,7 +148,40 @@ function format (d) {
             row.child( format(row.data()) ).show();
             tr.addClass('shown');
         }
-    });{% endif %}
+    });
+
+
+// Channel to update table automatically
+var loc = window.location;
+var wsStart = 'ws://';
+if (loc.protocol == 'https:') {
+    wsStart = 'wss://'
+}
+var endpoint = wsStart + loc.host + "/ws/workflows/{{ workflow.id }}/";
+console.log(endpoint);
+var socket = new WebSocket(endpoint);
+
+// When the workflow statuses are updated, updat the table
+socket.onmessage = function(e){
+    var data = JSON.parse(e.data)
+    if (data['status'] == "success") {
+        $('#taskTable').dataTable().fnClearTable();
+        $('#taskTable').dataTable().fnAddData(data['text']['statuses']);
+        $("#workflow-output").html(data['text']['output'])         
+        $("#workflow-error").html(data['text']['error'])         
+    }
+};
+socket.onopen = function(e){
+    console.log("open", e);
+};
+socket.onerror = function(e){
+    console.log("error", e)
+};
+socket.onclose = function(e){
+    console.log("close", e)
+};
+
+{% endif %}
 });
 </script>
 {% endblock %}

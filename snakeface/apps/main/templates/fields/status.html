@@ -1,0 +1,3 @@
+{% if workflow.retval == 0 %}<span class="badge badge-success">Completed</span>
+{% elif not workflow.retval %}<span class="badge badge-secondary">Pending</span>
+{% else %}<span class="badge badge-danger">Error</span>{% endif %}

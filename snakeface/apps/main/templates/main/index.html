@@ -26,6 +26,7 @@ code {
                       <table id="taskTable" class="table table-striped table-bordered"  width="100%">
                       <thead>
                            <th>Id</th>
+                           <th>Status</th>
                            <th>Snakefile</th>
                            <th>Command</th>
                            <th>Actions</th>
@@ -33,6 +34,7 @@ code {
                       <tbody>{% for workflow in workflows %}
                           <tr>
                             <td>{{ workflow.id }}</td>
+                            <td>{% include "fields/status.html" with status=workflow.retval %}</td>
                             <td>{{ workflow.snakefile }}</td>
                             <td><code>{{ workflow.command }}</code></td>
                             <td><button class="btn btn-primary"><a href="{% url 'main:view_workflow' workflow.id %}">View</a></button></td>

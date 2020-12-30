@@ -27,6 +27,7 @@ INSTALL_REQUIRES = (
     ("django-extensions", {"exact_version": "3.0.2"}),
     ("djangorestframework", {"exact_version": "3.11.1"}),
     ("drf-yasg", {"exact_version": "1.20.0"}),
+    ("channels", {"exact_version": "3.0.3"}),
 )
 
 # Dependencies provided by snakemake: pyYaml, jinja2

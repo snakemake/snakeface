@@ -55,6 +55,40 @@ def run_notebook_workflow(request, wid, uid):
         messages.success(request, "Workflow %s has started running." % workflow.id)
 
 
+# Statuses
+
+
+def serialize_workflow_statuses(workflow):
+    """A shared helper function to serialize a list of workflow statuses into
+    json.
+    """
+    levels = {
+        "debug": "primary",
+        "dag_debug": "primary",
+        "info": "info",
+        "warning": "warning",
+        "error": "danger",
+    }
+    data = []
+    for i, status in enumerate(workflow.workflowstatus_set.all()):
+        entry = status.msg
+        level = levels.get(entry.get("level"), "secondary")
+        badge = "<span class='badge badge-%s'>%s</span>" % (
+            level,
+            entry.get("level", "info"),
+        )
+        entry.update(
+            {
+                "order": i,
+                "job": entry.get("job", ""),
+                "msg": entry.get("msg", ""),
+                "level": badge,
+            }
+        )
+        data.append(entry)
+    return data
+
+
 def checkRun(request, wid):
     workflow = Workflow.objects.get(pk=wid)
     return JsonResponse({"status": workflow.status})
@@ -76,4 +110,5 @@ def doRun(wid, uid):
     workflow.error = "<br>".join(runner.error)
     workflow.output = "<br>".join(runner.output)
     workflow.status = "NOTRUNNING"
+    workflow.retval = runner.retval
     workflow.save()

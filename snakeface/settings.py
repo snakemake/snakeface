@@ -118,6 +118,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
     "snakeface.apps.base",
     "snakeface.apps.api",
     "snakeface.apps.main",
@@ -164,6 +165,11 @@ if not cfg.DISABLE_CACHE:
     CACHE_MIDDLEWARE_SECONDS = 86400  # one day
 
 
+# If we are using a notebook, use an in memory channel layer
+if cfg.NOTEBOOK:
+    CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+
+
 ROOT_URLCONF = "snakeface.urls"
 
 TEMPLATES = [
@@ -185,6 +191,7 @@ TEMPLATES = [
 
 TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG
 WSGI_APPLICATION = "snakeface.wsgi.application"
+ASGI_APPLICATION = "snakeface.asgi.application"
 
 AUTH_USER_MODEL = "users.User"
 SOCIAL_AUTH_USER_MODEL = "users.User"

@@ -4,7 +4,7 @@ __license__ = "MPL 2.0"
 
 from django.core.exceptions import FieldError
 from django.db.models import Q
-from django.db.models.signals import pre_save, post_init
+from django.db.models.signals import pre_save, post_init, post_save
 from django.db import models
 from django.apps import apps
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -92,6 +92,7 @@ class Workflow(models.Model):
         choices=RUNNING_CHOICES, default="NOTRUNNING", blank=False, null=False
     )
     thread = models.PositiveIntegerField(default=None, blank=True, null=True)
+    retval = models.PositiveIntegerField(default=None, blank=True, null=True)
     workdir = models.TextField(blank=False, null=False, max_length=250)
 
     owners = models.ManyToManyField(
