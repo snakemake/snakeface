@@ -35,7 +35,9 @@ tr.shown td.details-control {
            <div class="card-body">
                <div class="row" style="padding-bottom:20px">
                    <div class="col-md-12">
-                       <a class="btn btn-primary btn-sm" style="float:right" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>
+                       <a class="btn btn-danger btn-sm" style="float:right;" id="delete-workflow">DELETE</a>
+                       <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:edit_workflow' workflow.id %}">EDIT</a>
+                       <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>
                    </div>      
                </div>
            <table class="tablesorter table table-striped" width="100%">
@@ -103,6 +105,13 @@ tr.shown td.details-control {
 {% block scripts %}
 <script>
 $(document).ready(function() {
+
+$("#delete-workflow").click(function(){
+    var r = confirm("Are you sure you want to delete this workflow? This action cannot be undone.");
+    if (r == true) {
+        document.location = "{% url 'main:delete_workflow' workflow.id %}"
+    }
+})
 
 {% if workflow.workflowstatus_set.count > 0 %}
 function format (d) {

@@ -27,7 +27,7 @@ code {
 </style>
 {% endblock %}
 {% block content %}
-<form method="POST" action="{% if workflow_id %}{% url 'main:new_workflow' workflow_id %}{% else %}{% url 'main:new_workflow' %}{% endif %}">
+<form method="POST" action="{% if workflow_id %}{% url 'main:edit_workflow' workflow_id %}{% else %}{% url 'main:new_workflow' %}{% endif %}">
 {% csrf_token %}
 <div class="sticky-top" style="flex-direction:row; padding:0px; margin:0px" id="buttons"><a class="btn btn-sm btn-primary" href="#div_main" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;">MAIN</a>{% for name, group in groups.items %}<a class="btn btn-sm btn-primary" href="#div{{ name | slugify }}" role="button" style="opacity:100%;margin-right:5px;margin-bottom:0px;{% if name == "ENVIRONMENT MODULES" %}min-width:200px{% endif %}">{{ name }}</a>{% endfor %}  <input class="btn btn-sm btn-info" role="button" type="submit" value="Run Workflow" style="width:200px;opacity:100%;float:right"/>
 </div>

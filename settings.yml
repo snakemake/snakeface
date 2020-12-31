@@ -33,6 +33,9 @@ NOTEBOOK_ONLY: null
 # Maximum number of jobs to allow running at once
 MAXIMUM_NOTEBOOK_JOBS: 2
 
+# How often to refresh statuses on a workflow details page
+WORKFLOW_UPDATE_SECONDS: 10
+
 # Executors (set to non null to enable, use profile if needed), local set by default
 EXECUTOR_CLUSTER: null
 EXECUTOR_GOOGLE_LIFE_SCIENCES: null

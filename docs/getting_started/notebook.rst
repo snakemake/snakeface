@@ -47,16 +47,7 @@ You might find it useful to organize your projects.
 
 image:: ../images/after-notebook-login.png
 
-Next, choose a name for your collection. If you are doing a notebook, the private and
-public fields aren't relevant - everything is private to you.
-
-image:: ../images/new-collection.png
-
-You'll be taken to your new collection, which doesn't have any workflows.
-
-image:: ../images/new-collection.png
-
-You can click on the button to create a workflow to create one. The next
+Next, click on the button to create a new workflow. The next
 form will provide input fields for all arguments provided by your Snakemake
 installation. You can select the blue buttons at the top (they are always at the
 top) to jump to a section, and see the command being previewed at the bottom.
@@ -76,12 +67,16 @@ image:: ../images/workflow-detail.png
 
 This page also has metadata for how to interact with your workflow if you choose
 to run it again with Snakemake from the command line. A token and arguments for monitoring
-are required.
+are required. At the bottom part of the page, there is a status table that updates
+automatically via a Web Socket.
+
+image:: ../images/workflow-table.png
 
 Finally, you'll also be able to see your new collection in the Workflow Collections table
 on the dashboard.
 
 image:: ../images/dashboard.png
+
 
 Continuing A Workflow
 =====================
@@ -89,12 +84,8 @@ Continuing A Workflow
 If you want to start a workflow from the command line to interact with a snakeface
 server, or you've already started one with Snakeface and want it to reference the same identifier again,
 you can easily run snakemake to do this by adding an environment variable for an 
-authorization token, and a workflow id. If you look at a workflow's detail page:
-
-
-image:: ../images/workflow-details.png
-
-You'll see that the token and command line arguments are provided for you. You
+authorization token, and a workflow id. If you look at the workflow details page above,
+you'll see that the token and command line arguments are provided for you. You
 might re-run an existing workflow like this:
 
 .. code:: console

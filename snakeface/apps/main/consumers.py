@@ -3,6 +3,7 @@ import asyncio
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from snakeface.apps.main.models import Workflow
 from snakeface.apps.main.tasks import serialize_workflow_statuses
+from snakeface.settings import cfg
 from asgiref.sync import sync_to_async
 
 
@@ -36,7 +37,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     async def update_workflow_status(self):
         while self.connected:
-            await asyncio.sleep(5)
+            await asyncio.sleep(cfg.WORKFLOW_UPDATE_SECONDS)
 
             status = "success"
             data = await async_get_statuses(self.workflow_id)

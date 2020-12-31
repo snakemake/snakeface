@@ -99,6 +99,11 @@ def doRun(wid, uid):
     workflow = Workflow.objects.get(pk=wid)
     user = User.objects.get(pk=uid)
 
+    # Clear the workflow of old output, return codes, and errors
+    workflow.output = None
+    workflow.error = None
+    workflow.retval = None
+
     runner = CommandRunner()
     workflow.status = "RUNNING"
     workflow.save()

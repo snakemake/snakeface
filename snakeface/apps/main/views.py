@@ -51,6 +51,18 @@ def index(request):
 
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
+def delete_workflow(request, wid):
+    workflow = get_object_or_404(Workflow, pk=wid)
+
+    # Ensure that the user is an owner
+    if request.user not in workflow.owners.all():
+        return HttpResponseForbidden()
+    workflow.delete()
+    return redirect("main:dashboard")
+
+
+@login_is_required
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def edit_workflow(request, wid):
 
     workflow = get_object_or_404(Workflow, pk=wid)

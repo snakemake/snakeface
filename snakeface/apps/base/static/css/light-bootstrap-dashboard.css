@@ -866,6 +866,7 @@ body>.navbar-collapse[data-color="purple"]:after {
     text-decoration: none;
 }
 
+
 .btn {
     border-width: 2px;
     font-weight: 600 !important;
@@ -874,6 +875,11 @@ body>.navbar-collapse[data-color="purple"]:after {
     padding: 8px 16px;
     border-color: #888888;
     color: #fff !important;
+}
+
+.btn-danger {
+  border-color: rgb(220, 53, 69);
+  cursor: pointer;
 }
 
 .btn.disabled,
@@ -1207,72 +1213,7 @@ fieldset[disabled] .btn-warning.active {
     border-top-color: #FF9500;
 }
 
-.btn-danger {
-    border-color: #FF4A55;
-    color: #FF4A55;
-}
 
-.btn-danger:hover,
-.btn-danger:focus,
-.btn-danger:active,
-.btn-danger.active,
-.open>.btn-danger.dropdown-toggle {
-    background-color: transparent;
-    color: #EE2D20;
-    border-color: #EE2D20;
-}
-
-.btn-danger.disabled,
-.btn-danger.disabled:hover,
-.btn-danger.disabled:focus,
-.btn-danger.disabled.focus,
-.btn-danger.disabled:active,
-.btn-danger.disabled.active,
-.btn-danger:disabled,
-.btn-danger:disabled:hover,
-.btn-danger:disabled:focus,
-.btn-danger:disabled.focus,
-.btn-danger:disabled:active,
-.btn-danger:disabled.active,
-.btn-danger[disabled],
-.btn-danger[disabled]:hover,
-.btn-danger[disabled]:focus,
-.btn-danger[disabled].focus,
-.btn-danger[disabled]:active,
-.btn-danger[disabled].active,
-fieldset[disabled] .btn-danger,
-fieldset[disabled] .btn-danger:hover,
-fieldset[disabled] .btn-danger:focus,
-fieldset[disabled] .btn-danger.focus,
-fieldset[disabled] .btn-danger:active,
-fieldset[disabled] .btn-danger.active {
-    background-color: transparent;
-    border-color: #FF4A55;
-}
-
-.btn-danger.btn-fill {
-    color: #FFFFFF;
-    background-color: #FF4A55;
-    opacity: 1;
-    filter: alpha(opacity=100);
-}
-
-.btn-danger.btn-fill:hover,
-.btn-danger.btn-fill:focus,
-.btn-danger.btn-fill:active,
-.btn-danger.btn-fill.active,
-.open>.btn-danger.btn-fill.dropdown-toggle {
-    background-color: #EE2D20;
-    color: #FFFFFF;
-}
-
-.btn-danger.btn-fill .caret {
-    border-top-color: #FFFFFF;
-}
-
-.btn-danger .caret {
-    border-top-color: #FF4A55;
-}
 
 .btn-neutral {
     border-color: #FFFFFF;

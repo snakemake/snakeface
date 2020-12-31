@@ -27,8 +27,3 @@ urlpatterns = [
         ),
     ),
 ]
-
-if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
-    from snakeface.apps.browser import urls as browser_urls
-
-    urlpatterns += [url(r"^workspace/", include(browser_urls, namespace="filemanager"))]

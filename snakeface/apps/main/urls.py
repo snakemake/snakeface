@@ -18,11 +18,8 @@ urlpatterns = [
         views.workflow_statuses,
         name="workflow_statuses",
     ),
-    path(
-        "workflows/<int:wid>/edit/",
-        views.edit_workflow,
-        name="edit_workflow",
-    ),
+    path("workflows/<int:wid>/edit/", views.edit_workflow, name="edit_workflow"),
+    path("workflows/<int:wid>/delete/", views.delete_workflow, name="delete_workflow"),
 ]
 
 app_name = "main"
