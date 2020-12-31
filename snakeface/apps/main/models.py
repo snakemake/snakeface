@@ -21,7 +21,7 @@ from django.contrib.postgres.fields import (
     ArrayField as DjangoArrayField,
 )
 
-from snakeface.apps.main.utils import CommandRunner, write_file, get_tmpfile
+from snakeface.apps.main.utils import CommandRunner, write_file, get_tmpfile, read_file
 from snakeface.argparser import SnakefaceParser
 from snakeface.settings import cfg
 from django.db.models import Field
@@ -181,6 +181,27 @@ class Workflow(models.Model):
     @property
     def members(self):
         return list(itertools.chain(self.owners.all(), self.contributors.all()))
+
+    def get_report(self):
+        """load the report file, if it exists."""
+        report_file = self._get_report_file()
+        if report_file:
+            return read_file(report_file)
+
+    def has_report(self):
+        """returns True if the workflow command has a designated report, and
+        the report file exists
+        """
+        if self._get_report_file():
+            return True
+        return False
+
+    def _get_report_file(self):
+        report_file = self.data.get("report")
+        fullpath = None
+        if report_file:
+            fullpath = os.path.join(self.workdir, report_file)
+        return fullpath
 
     def has_edit_permission(self):
         """If we are running in a notebook environment, there is just one user

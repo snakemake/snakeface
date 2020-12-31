@@ -173,6 +173,8 @@ def workflow_statuses(request, wid):
 @login_is_required
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_workflow(request, wid):
+
+    # TODO: check for report file, if present, can we link to report?
     workflow = get_object_or_404(Workflow, pk=wid)
     return render(
         request,
@@ -181,4 +183,18 @@ def view_workflow(request, wid):
             "workflow": workflow,
             "page_title": "%s: %s" % (workflow.name or "Workflow", workflow.id),
         },
+    )
+
+
+def view_workflow_report(request, wid):
+    """If a workflow generated a report and the report exists, render it to a page"""
+    workflow = get_object_or_404(Workflow, pk=wid)
+    report = workflow.get_report()
+    if not report:
+        messages.info(request, "This workflow does not have a report file.")
+        redirect("main:view_workflow", wid=workflow.id)
+    return render(
+        request,
+        "workflows/report.html",
+        {"workflow": workflow, "page_title": "Report", "report": report},
     )

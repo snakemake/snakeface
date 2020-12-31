@@ -35,6 +35,7 @@ tr.shown td.details-control {
            <div class="card-body">
                <div class="row" style="padding-bottom:20px">
                    <div class="col-md-12">
+                       {% if workflow.has_report %}<a target="_blank" class="btn btn-primary btn-sm" href="{% url 'main:view_workflow_report' workflow.id %}">View Report</a>{% endif %}
                        <a class="btn btn-danger btn-sm" style="float:right;" id="delete-workflow">DELETE</a>
                        <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:edit_workflow' workflow.id %}">EDIT</a>
                        <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>

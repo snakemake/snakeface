@@ -103,6 +103,7 @@ def doRun(wid, uid):
     workflow.output = None
     workflow.error = None
     workflow.retval = None
+    workflow.workflowstatus_set.all().delete()
 
     runner = CommandRunner()
     workflow.status = "RUNNING"

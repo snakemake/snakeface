@@ -19,6 +19,11 @@ urlpatterns = [
         name="workflow_statuses",
     ),
     path("workflows/<int:wid>/edit/", views.edit_workflow, name="edit_workflow"),
+    path(
+        "workflows/<int:wid>/report/",
+        views.view_workflow_report,
+        name="view_workflow_report",
+    ),
     path("workflows/<int:wid>/delete/", views.delete_workflow, name="delete_workflow"),
 ]
 

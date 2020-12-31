@@ -53,6 +53,13 @@ def write_file(filename, content):
     return filename
 
 
+def read_file(filename):
+    """Write some text content to a file"""
+    with open(filename, "r") as fd:
+        content = fd.read()
+    return content
+
+
 def get_tmpfile(prefix="", suffix=""):
     """get a temporary file with an optional prefix. By default, the file
     is closed (and just a name returned).

@@ -92,3 +92,19 @@ might re-run an existing workflow like this:
 
     export WMS_MONITOR_TOKEN=a2d0d2f2-dfa8-4fd6-b98c-f3219a2caa8c
     snakemake --cores 1 --wms-monitor http://127.0.0.1:5000 --wms-monitor-arg id=3
+
+
+Workflow Reports
+================
+
+If you want to add a report file to the workflow, just as you would with command line 
+Snakemake, you'll need to install additional dependencies first:
+
+.. code:: console
+
+    pip install snakemake[reports]
+
+
+And then define your report.html file in the reports field.
+    
+
