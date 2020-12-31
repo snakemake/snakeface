@@ -8,10 +8,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import resolve_url, redirect
 from snakeface.settings import cfg
 from snakeface import settings
-from snakeface.apps.users.utils import get_notebook_token
 from urllib.parse import urlparse
-
-import uuid
 
 
 def login_is_required(

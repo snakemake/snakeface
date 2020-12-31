@@ -53,7 +53,7 @@ installation. You can select the blue buttons at the top (they are always at the
 top) to jump to a section, and see the command being previewed at the bottom.
 The command will always update when you make a new selection.
 
-.. image:: ../images/new-workflow.png
+.. image:: ../images/new_workflow.png
 
 Note that if you start running your notebook in a location without any Snakefiles,
 you will get a message that tells you to create one first. A Snakefile matching
@@ -72,8 +72,7 @@ automatically via a Web Socket.
 
 .. image:: ../images/workflow-table.png
 
-Finally, you'll also be able to see your new collection in the Workflow Collections table
-on the dashboard.
+Finally, you'll also be able to see your workflows on the dashboard page in the Workflows table.
 
 .. image:: ../images/dashboard.png
 

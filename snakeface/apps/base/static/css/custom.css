@@ -15,6 +15,11 @@ btn {
   color: #464a4e !important;
 }
 
+.btn-warning {
+   cursor: pointer !important;
+}
+
+
 #square_logo {
   width:50px;
   float: right;
@@ -33,7 +38,7 @@ table.dataTable thead th, table.dataTable thead td {
 }
 
 div.dataTables_wrapper div.dataTables_length select {
-    width: 45px !important;
+    width: 55px !important;
 }
 
 table.dataTable.no-footer {

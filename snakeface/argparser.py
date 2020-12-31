@@ -7,11 +7,9 @@ from snakeface.settings import cfg
 from snakeface import settings
 from snakeface.apps.main.utils import get_snakefile_choices
 from jinja2 import Template
-import argparse
 import logging
 import os
 import json
-import sys
 
 logger = logging.getLogger("argparser")
 
@@ -280,7 +278,6 @@ class SnakefaceArgument:
                 os.path.join(templates, "choice_field.html")
             )
 
-        choices = []
         return self.choice_template.render(
             name=self.action["dest"],
             label=self.field_name,

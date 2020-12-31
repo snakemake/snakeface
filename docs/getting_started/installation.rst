@@ -27,10 +27,17 @@ Then you'll want to create a new virtual environment, and install dependencies.
     $ pip install -r requirements.txt
 
 
+And install Snakeface (from the repository directly)
+
+.. code:: console
+ 
+    $ pip install -e .
+
+
 Install via pip
 ===============
 
-Snakedeploy can also be installed with pip.
+Snakeface can also be installed with pip.
 
 .. code:: console
 
@@ -75,7 +82,7 @@ Once it's installed, you should be able to inspect the client!
 
     LOGGING:
       --verbose             verbose output for logging.
-      --log-disable-color   Disable color for snakedeploy logging.
+      --log-disable-color   Disable color for snakeface logging.
       --log-use-threads     Force threads rather than processes.
 
     actions:
@@ -85,5 +92,13 @@ Once it's installed, you should be able to inspect the client!
         notebook            run a snakeface notebook
 
 
-Snakemake is available on PyPi as well as through Bioconda and also from source code.
-You can use one of the following ways for installing Snakemake.
+Setup
+=====
+
+As a user, you most likely want to use Snakeface as an on demand notebook, so no additional
+setup is needed other than installing the package. As we add more deployment types that
+warrant additional configuration, or in the case of installing Snakeface as a cluster admin,
+you likely will want to install from the source repository (or a release) and 
+edit the settings.yml file in the root of the repository before deploying your service.
+More information will be added as this is developed. If you are interested, you can
+look at :ref:`getting_started-settings`.

@@ -37,6 +37,7 @@ tr.shown td.details-control {
                    <div class="col-md-12">
                        {% if workflow.has_report %}<a target="_blank" class="btn btn-primary btn-sm" href="{% url 'main:view_workflow_report' workflow.id %}">View Report</a>{% endif %}
                        <a class="btn btn-danger btn-sm" style="float:right;" id="delete-workflow">DELETE</a>
+                       <a class="btn btn-warning btn-sm" style="float:right;" id="cancel-workflow" {% if workflow.status == "RUNNING" %}{% else %}disabled{% endif %}>CANCEL</a>
                        <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:edit_workflow' workflow.id %}">EDIT</a>
                        <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" id="run-workflow" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>
                    </div>      
@@ -80,7 +81,7 @@ tr.shown td.details-control {
         <div class="card">
            <div class="card-body">
                <div class="row">
-                 {% if workflow.error %}<p id="workflow-error" class="alert alert-danger" style="width:100%">{{ workflow.error | safe }}</p>{% endif %}
+                 {% if workflow.error %}<p id="workflow-error" class="alert alert-info" style="width:100%">{{ workflow.error | safe }}</p>{% endif %}
                  {% if workflow.output %}<p id="workflow-output" class="alert alert-info" style="width:100%">{{ workflow.output | safe }}</p>{% endif %}
                </div>
            </div>
@@ -88,19 +89,20 @@ tr.shown td.details-control {
     </div>
 </div>{% endif %}
 
-{% if workflow.workflowstatus_set.count > 0 %}<div class="row">
+<div class="row">
     <div class="col">
         <div class="card">
            <div class="card-body">
                <div class="row">
-                   {% if workflow.workflowstatus_set.count > 0 %}<div class="col-md-12">
+                   <div class="col-md-12">
+                   <p><small>This table updates every {{ WORKFLOW_UPDATE_SECONDS }} seconds</small></p>
                    {% include "workflows/workflow_run_table.html" %}
-                   </div>{% endif %}
+                   </div>
                </div>
            </div>
         </div>
     </div>
-</div>{% endif %}
+</div>
 
 {% endblock %}
 {% block scripts %}
@@ -114,6 +116,14 @@ $("#delete-workflow").click(function(){
     }
 })
 
+$("#cancel-workflow").click(function(){
+    var r = confirm("Are you sure you want to cancel this workflow? Cancelling can take up to 10 seconds.");
+    if (r == true) {
+        document.location = "{% url 'main:cancel_workflow' workflow.id %}"
+    }
+})
+
+
 function format (d) {
     var row = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'
     $.each(d, function(i, n){
@@ -126,22 +136,24 @@ function format (d) {
 
     var table = $('#taskTable').DataTable( {
         "ajax": "{% url 'main:workflow_statuses' workflow.id  %}",
-        "pageLength": 100,
+        "pageLength": 200,
+        "lengthMenu": [[50,100,200,300], [50,100,200,300]],
         "columns": [
             {
                 "className":      'details-control',
                 "orderable":      false,
                 "data":           null,
-                "defaultContent": ''
+                "defaultContent": '',
+                "width": "5%"
             },
-            { "data": "order" },
-            { "data": "level" },
+            { "data": "order"},
+            { "data": "level"},
             { "data": "job" },
             { "data": "msg" }
         ],
         "order": [[1, 'asc']]
     } );
-     
+
     // Add event listener for opening and closing details
     $('#taskTable tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
@@ -173,6 +185,7 @@ var socket = new WebSocket(endpoint);
 // When the workflow statuses are updated, updat the table
 socket.onmessage = function(e){
     var data = JSON.parse(e.data)
+    console.log(data)
     if (data['status'] == "success") {
         $('#taskTable').dataTable().fnClearTable();
         $('#taskTable').dataTable().fnAddData(data['text']['statuses']);
@@ -180,6 +193,7 @@ socket.onmessage = function(e){
         $("#workflow-error").html(data['text']['error'])         
         if (data['retval'] == 0) {
             $("#run-workflow").attr('disabled', false);
+            $("#cancel-workflow").attr('disabled', true);
         }
     }
 };

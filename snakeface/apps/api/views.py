@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib import messages
 
 from rest_framework.renderers import JSONRenderer
 from ratelimit.mixins import RatelimitMixin
@@ -133,5 +132,5 @@ class UpdateWorkflow(RatelimitMixin, APIView):
         message = json.loads(request.POST.get("msg", {}))
 
         # Update the workflow with a new status message
-        workflow_status = WorkflowStatus.objects.create(workflow=workflow, msg=message)
+        WorkflowStatus.objects.create(workflow=workflow, msg=message)
         return Response(status=200, data={})

@@ -4,11 +4,10 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-# TODO: arguments for logging
-# from snakeface.logger import setup_logger
+from snakeface.logger import setup_logger
 from django.core.wsgi import get_wsgi_application
 from django.core import management
-import snakedeploy
+from snakeface.version import __version__
 import argparse
 import sys
 import os
@@ -65,6 +64,14 @@ def get_parser():
     logging_group = parser.add_argument_group("LOGGING")
 
     logging_group.add_argument(
+        "--quiet",
+        dest="quiet",
+        help="suppress logging.",
+        default=False,
+        action="store_true",
+    )
+
+    logging_group.add_argument(
         "--verbose",
         dest="verbose",
         help="verbose output for logging.",
@@ -76,7 +83,7 @@ def get_parser():
         "--log-disable-color",
         dest="disable_color",
         default=False,
-        help="Disable color for snakedeploy logging.",
+        help="Disable color for snakeface logging.",
         action="store_true",
     )
 
@@ -129,9 +136,7 @@ def main():
         """print help, including the software version and active client
         and exit with return code.
         """
-        version = snakeface.__version__
-
-        print("\nSnakemake Interface v%s" % version)
+        print("\nSnakemake Interface v%s" % __version__)
         parser.print_help()
         sys.exit(return_code)
 
@@ -140,7 +145,7 @@ def main():
 
     # Show the version and exit
     if args.version:
-        print(snakeface.__version__)
+        print(__version__)
         sys.exit(0)
 
     # Do we want a notebook?
@@ -158,13 +163,13 @@ def main():
 
     application = get_wsgi_application()
 
-    # TODO customize django logging
-    # setup_logger(
-    #    quiet=args.quiet,
-    #    nocolor=args.disable_color,
-    #    debug=args.verbose,
-    #    use_threads=args.use_threads,
-    # )
+    # customize django logging
+    setup_logger(
+        quiet=args.quiet,
+        nocolor=args.disable_color,
+        debug=args.verbose,
+        use_threads=args.use_threads,
+    )
 
     # Migrations
     management.call_command("makemigrations", verbosity=args.verbosity)

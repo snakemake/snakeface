@@ -2,21 +2,11 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from django.db.models import Q
-from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.http import HttpResponse, Http404, HttpResponseForbidden, JsonResponse
-from django.conf import settings
-from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden, JsonResponse
 from django.contrib import messages
-from django.views import generic
-
-from django.views.decorators.cache import never_cache
-
-from decimal import Decimal
 import os
-import tempfile
 
-from ratelimit.mixins import RatelimitMixin
 from ratelimit.decorators import ratelimit
 from snakeface.argparser import SnakefaceParser
 from snakeface.settings import cfg
@@ -59,6 +49,22 @@ def delete_workflow(request, wid):
         return HttpResponseForbidden()
     workflow.delete()
     return redirect("main:dashboard")
+
+
+@login_is_required
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
+def cancel_workflow(request, wid):
+    workflow = get_object_or_404(Workflow, pk=wid)
+
+    # Ensure that the user is an owner
+    if request.user not in workflow.owners.all():
+        return HttpResponseForbidden()
+    workflow.status = "CANCELLED"
+    workflow.save()
+    messages.info(
+        request, "Your workflow has been cancelled, and will stop within 10 seconds."
+    )
+    return redirect("main:view_workflow", wid=workflow.id)
 
 
 @login_is_required
@@ -113,9 +119,19 @@ def edit_or_update_workflow(request, parser, workflow=None):
 
         for arg, setting in request.POST.items():
             parser.set(arg, setting)
-        if not parser.validate():
-            message.error(request, parser.errors)
+
+        # Has the user gone over the workflow number limit?
+        if (
+            Workflow.objects.filter(owners=request.user).count()
+            >= cfg.USER_WORKFLOW_LIMIT
+        ):
+            messages.info(
+                request, "You are at the workflow limit of %s" % cfg.USER_WORKFLOW_LIMIT
+            )
+        elif not parser.validate():
+            messages.info(request, parser.errors)
         else:
+            print("Creating workflow")
             workflow = form.save()
             workflow.data = parser.to_dict()
             workflow.snakefile = parser.snakefile
@@ -174,7 +190,6 @@ def workflow_statuses(request, wid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_workflow(request, wid):
 
-    # TODO: check for report file, if present, can we link to report?
     workflow = get_object_or_404(Workflow, pk=wid)
     return render(
         request,

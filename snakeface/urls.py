@@ -10,7 +10,10 @@ from snakeface.apps.base import urls as base_urls
 from snakeface.apps.main import urls as main_urls
 from snakeface.apps.users import urls as user_urls
 from snakeface.apps.api import urls as api_urls
-from snakeface.settings import cfg
+
+admin.site.site_header = "Snakeface Admin"
+admin.site.site_title = "Snakeface Admin"
+admin.site.index_title = "Snakeface Admin"
 
 admin.autodiscover()
 

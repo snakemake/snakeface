@@ -14,14 +14,16 @@
                 <div class="container-fluid">
                     <nav>
                        <ul>
-                           <li style="float:right; padding-left:30px" ><a href="https://twitter.com/johanneskoester"><i class="icon ti ti-twitter-alt"></i></a></li>
+                           <li style="float:right;"><a target="_blank" href="{{ GITHUB_DOCUMENTATION }}"><i class="icon ti ti-book"></i></a></li>
+                           <li style="float:right;"><a target="_blank" href="{{ GITHUB_REPOSITORY }}"><i class="icon ti ti-github"></i></a></li>
+                           {% if TWITTER_USERNAME %}<li style="float:right;"><a target="_blank" href="https://twitter.com/{{ TWITTER_USERNAME }}"><i class="icon ti ti-twitter-alt"></i></a></li>{% endif %}
                        </ul>
                        <p class="copyright text-center">
                             ©
                             <script>
                                 document.write(new Date().getFullYear())
                             </script>
-                            <a href="https://github.com/snakemake">Snakemake</a>, made with love for better workflows.
+                            <a href="https://github.com/snakemake">Snakemake Community</a>, made with love for better workflows.
                         </p>
                     </nav>
                 </div>

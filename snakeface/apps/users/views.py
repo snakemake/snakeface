@@ -2,31 +2,20 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from snakeface.apps.users.models import User
-from snakeface.apps.users.utils import get_notebook_token, get_or_create_notebook_user
+
+from django.contrib.auth import logout as auth_logout, authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from ratelimit.decorators import ratelimit
+from snakeface.apps.users.forms import TokenForm
+from snakeface.apps.users.decorators import login_is_required
+
+from snakeface.apps.users.utils import get_notebook_token
 from snakeface.settings import (
     VIEW_RATE_LIMIT as rl_rate,
     VIEW_RATE_LIMIT_BLOCK as rl_block,
     cfg,
 )
-
-from social_core.backends.github import GithubOAuth2
-from django.contrib.auth import logout as auth_logout, authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.db.models.aggregates import Count
-from django.shortcuts import get_object_or_404, render, redirect
-from django.db.models import Q, Sum
-from ratelimit.decorators import ratelimit
-from rest_framework.authtoken.models import Token
-
-from django.utils import timezone
-from django.http import JsonResponse, HttpResponseForbidden
-from six.moves.urllib.parse import urljoin
-from snakeface.apps.users.forms import TokenForm
-from snakeface.apps.users.decorators import login_is_required
-
-import uuid
 
 
 @login_is_required

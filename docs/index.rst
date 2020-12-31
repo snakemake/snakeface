@@ -4,9 +4,6 @@
 Snakeface
 =========
 
-.. image:: https://github.com/snakemake/snakeface/workflows/CI/badge.svg?branch=main&label=CI
-    :target: https://github.com/snakemake/snakeface/actions?query=branch%3Amain+workflow%3ACI
-
 .. image:: https://img.shields.io/discord/753690260830945390?label=discord%20chat   
     :alt: Discord
     :target: https://discord.gg/NUdMtmr

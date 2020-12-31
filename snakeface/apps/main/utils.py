@@ -2,12 +2,9 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from wsgiref.util import FileWrapper
-from django.http import StreamingHttpResponse
 from snakeface.settings import cfg
 import subprocess
 import threading
-import ctypes
 
 import tempfile
 import os
@@ -93,18 +90,6 @@ class ThreadRunner(threading.Thread):
             if thread is self:
                 return thread_id
 
-    def stop_workflow(self):
-        """Stop the workflow from running given the thread id"""
-        thread_id = self.thread_id
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            thread_id, ctypes.py_object(SystemExit)
-        )
-        if res > 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            print("Failed to stop thread %s" % thread_id)
-        self.workflow.status = "NOTRUNNING"
-        self.workflow.save()
-
 
 class CommandRunner(object):
     """Wrapper to use subprocess to run a command. This is based off of pypi
@@ -133,8 +118,11 @@ class CommandRunner(object):
             lines.append(s.decode("utf-8"))
         stream.close()
 
-    def run_command(self, cmd, env=None, **kwargs):
+    def run_command(
+        self, cmd, env=None, cancel_func=None, cancel_func_kwargs=None, **kwargs
+    ):
         self.reset()
+        cancel_func_kwargs = cancel_func_kwargs or {}
 
         # If we need to update the environment
         # **IMPORTANT: this will include envars from host. Absolutely cannot
@@ -152,7 +140,28 @@ class CommandRunner(object):
         t1.start()
         t2 = threading.Thread(target=self.reader, args=(p.stderr, "stderr"))
         t2.start()
-        p.wait()
+
+        # Continue running unless cancel function is called
+        counter = 0
+        while True:
+
+            # Check on process for finished or cancelled
+            if p.poll() != None:
+                print("Return value found, stopping.")
+                break
+
+            # Check the cancel function every 100 loops
+            elif (
+                counter % 10000 == 0
+                and cancel_func
+                and cancel_func(**cancel_func_kwargs)
+            ):
+                print("Process is terminated")
+                p.terminate()
+                break
+            counter += 1
+
+        # p.wait()
         t1.join()
         t2.join()
         self.retval = p.returncode

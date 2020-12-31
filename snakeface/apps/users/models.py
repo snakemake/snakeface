@@ -9,7 +9,6 @@ from django.dispatch import receiver
 
 from django.db import models
 from rest_framework.authtoken.models import Token
-import os
 
 
 class CustomUserManager(BaseUserManager):

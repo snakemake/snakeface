@@ -31,7 +31,7 @@ section.
 
     rule all:
         input:
-            "plots/quals.svg"
+            "calls/all.vcf"
 
 
     rule bwa_map:
@@ -83,23 +83,13 @@ section.
             "bcftools call -mv - > {output}"
 
 
-    rule plot_quals:
-        input:
-            "calls/all.vcf"
-        output:
-            "plots/quals.svg"
-        conda:
-             "environment.yaml"
-        script:
-            "scripts/plot-quals.py"
-
 
 
 Running Snakeface
 =================
 
 At this point, from this working directory you can run Snakeface. For example, you
-might run a notebook (:ref:`getting_started-notebook`). Make sure to select ``--use-conda``
+might run a :ref:`getting_started-notebook`. Make sure to select ``--use-conda``
 or else the environment above won't be properly sourced. This is one deviation from the main
 Snakemake tutorial, which has you install dependencies on the command line before running
 the workflow, and the workflow doesn't have the ``conda`` sections.

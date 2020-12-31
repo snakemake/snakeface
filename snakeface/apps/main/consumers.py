@@ -49,10 +49,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 status = "error"
                 self.connected = False
 
-            # Break the connection if the workflow is finished (status 0)
-            elif data.get("retval") == 0:
-                self.connected = False
-
             await self.send_json(
                 {"type": "websocket.send", "text": data, "status": status}
             )

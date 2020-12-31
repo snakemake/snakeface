@@ -1,49 +1,16 @@
 # Snakemake Interface (snakeface)
 
+![img/snakeface.png](img/snakeface.png)
+
 Snakeface is an interface for snakemake. If you are an individual, you can run
-it locally to manage one or more workflows. If you are an institution or group,
-you can deploy a shared instance for others to use. To get started, please see
-the [documentation](https://readthedocs.github.io/snakeface) (not created yet).
+it locally as a notebook to run and manage workflows. If you are an institution or group,
+you (will be able to) deploy a shared instance for others to use. To get started, please see
+the [documentation](https://snakemake.github.io/snakeface) (not created yet).
 
-## Usage
-
-This usage will be moved into the (not developed) documentation. To start
-a snakeface notebook, you can type:
-
-```bash
-snakeface notebook
-```
-
-or specify a port:
-
-```bash
-snakeface notebook --port 5555
-```
-
-and browse to the port specified at localhost to enter a token.
-
-![docs/images/notebook-login.png](docs/images/notebook-login.png)
-
-and here is the start of creating a workflow:
-
-![docs/images/new_workflow.png](docs/images/new_workflow.png)
-
-and after creation:
-
-![docs/images/workflow-detail.png](docs/images/workflow-detail.png)
-
-and the dashboard with more than one workflow.
-
-![docs/images/dashboard.png](docs/images/dashboard.png)
-
-**under development**
-
-## TODO:
-
- - we should be able to cancel a workflow running, which kills the thread and un-dsiables the button.
- - need to have signal for table to stop updating when workflow done
- - table should be rendered with display none on creation, and then shown when websocket updates with data
- - remove qcluster, we have threads for notebook 
+**Snakeface is under development!** We are developing deployment types and features
+as they are requested. Currently, a single user notebook deployment is supported.
+Please [open an issue](https://github.com/snakemake/snakeface/issues) to request a feature, bug fix, or different deployment type.
+See the [documentation](https://snakemake.github.io/snakeface/) to get started.
 
 ## Thanks
 

@@ -2,24 +2,12 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from django.core.exceptions import FieldError
-from django.db.models import Q
-from django.db.models.signals import pre_save, post_init, post_save
+from django.db.models.signals import pre_save
 from django.db import models
-from django.apps import apps
-from django.contrib.humanize.templatetags.humanize import intcomma
-from django.urls import reverse
-from django.utils.timesince import timesince
-
 
 from django.conf import settings
 from django.urls import reverse
-from django.db import models
-from django.contrib.postgres.fields import JSONField
-from django.contrib.postgres.fields import (
-    JSONField as DjangoJSONField,
-    ArrayField as DjangoArrayField,
-)
+from django.contrib.postgres.fields import JSONField as DjangoJSONField
 
 from snakeface.apps.main.utils import CommandRunner, write_file, get_tmpfile, read_file
 from snakeface.argparser import SnakefaceParser
@@ -27,7 +15,6 @@ from snakeface.settings import cfg
 from django.db.models import Field
 
 import itertools
-import uuid
 import json
 import os
 
@@ -70,7 +57,11 @@ if "sqlite" in settings.DATABASES["default"]["ENGINE"]:
             return self.value_from_object(obj)
 
 
-RUNNING_CHOICES = [("RUNNING", "RUNNING"), ("NOTRUNNING", "NOTRUNNING")]
+RUNNING_CHOICES = [
+    ("RUNNING", "RUNNING"),
+    ("NOTRUNNING", "NOTRUNNING"),
+    ("CANCELLED", "CANCELLED"),
+]
 
 
 class Workflow(models.Model):
@@ -168,7 +159,7 @@ class Workflow(models.Model):
             self.dag = "".join(runner.output)
             os.remove(filename)
 
-            # If running from the post_save signal, would be infinite loop
+            # If running from a signal, would be infinite loop
             if do_save:
                 self.save()
 
@@ -235,14 +226,6 @@ class WorkflowStatus(models.Model):
     modify_date = models.DateTimeField("date modified", auto_now=True)
     msg = JSONField(blank=False, null=False, default="{}")
     workflow = models.ForeignKey(
-        "main.Workflow", null=False, blank=False, on_delete=models.CASCADE
-    )
-
-
-class Report(models.Model):
-    """A report holds a report for a workflow."""
-
-    workflow_run = models.ForeignKey(
         "main.Workflow", null=False, blank=False, on_delete=models.CASCADE
     )
 

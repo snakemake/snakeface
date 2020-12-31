@@ -14,9 +14,7 @@
 # Social Networks
 GOOGLE_ANALYTICS_SITE: null
 GOOGLE_ANALYTICS_ID: null
-TWITTER_USERNAME: null
-INSTAGRAM_USERNAME: null
-FACEBOOK_USERNAME: null
+TWITTER_USERNAME: johanneskoester
 
 # Repository and Documentation
 GITHUB_REPOSITORY: https://github.com/snakemake/snakeface
@@ -50,7 +48,6 @@ DISABLE_NOTEBOOKS: true
 
 # Global server settings
 ENVIRONMENT: test
-HELP_CONTACT_EMAIL: null
 HELP_CONTACT_URL: https://github.com/snakemake/snakeface/issues
 SENDGRID_API_KEY: null
 SENDGRID_SENDER_EMAIL: null
@@ -61,21 +58,16 @@ REQUIRE_AUTH: true
 # Set a default profile (see https://github.com/snakemake-profiles)
 PROFILE: null
 
-# Set any global default arguments
-SNAKEMAKE_ARG_DEFAULTS:
- - cores: 1
-
 # Workflow collection settings
 PRIVATE_ONLY: null
 
-# Caching (set to null to enable)
-DISABLE_CACHE: "no"
+# Caching
+ENABLE_CACHE: false
 
 # Default working directory (overridden by client and environment)
 WORKDIR: null
 
 # Plugins (set to non null value to enable)
-PLUGIN_API_ENABLED: null
 PLUGIN_LDAP_AUTH_ENABLED: null
 PLUGIN_PAM_AUTH_ENABLED: null
 PLUGIN_SAML_AUTH_ENABLED: null

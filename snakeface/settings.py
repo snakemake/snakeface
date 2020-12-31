@@ -10,6 +10,7 @@ import sys
 from django.core.management.utils import get_random_secret_key
 from snakeface.apps.users.utils import get_username
 from datetime import datetime
+from importlib import import_module
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -137,6 +138,7 @@ INSTALLED_APPS = [
     "django_q",
     "rest_framework",
     "rest_framework.authtoken",
+    "drf_yasg",
 ]
 
 
@@ -154,7 +156,7 @@ MIDDLEWARE = [
 
 # Do we want to enable the cache?
 
-if not cfg.DISABLE_CACHE:
+if cfg.ENABLE_CACHE:
     MIDDLEWARE += [
         "django.middleware.cache.UpdateCacheMiddleware",
         "django.middleware.common.CommonMiddleware",
@@ -342,6 +344,7 @@ cfg.USERNAME = None
 if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
     cfg.USERNAME = get_username()
 
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 ## PLUGINS #####################################################################
 

@@ -11,11 +11,11 @@ def globals(request):
     correcty in the settings.py file."""
     return {
         "DOMAIN": settings.DOMAIN_NAME,
+        "WORKFLOW_UPDATE_SECONDS": settings.cfg.WORKFLOW_UPDATE_SECONDS,
         "NOTEBOOK": settings.cfg.NOTEBOOK,
         "TWITTER_USERNAME": settings.cfg.TWITTER_USERNAME,
         "GITHUB_REPOSITORY": settings.cfg.GITHUB_REPOSITORY,
         "GITHUB_DOCUMENTATION": settings.cfg.GITHUB_DOCUMENTATION,
-        "HELP_CONTACT_EMAIL": settings.cfg.HELP_CONTACT_EMAIL,
         "SITE_NAME": get_current_site(request).name,
         "GOOGLE_ANALYTICS_ID": settings.cfg.GOOGLE_ANALYTICS_ID,
         "GOOGLE_ANALYTICS_SITE": settings.cfg.GOOGLE_ANALYTICS_SITE,
