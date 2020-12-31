@@ -39,13 +39,13 @@ For either of the two you can optionally specify a port:
 For the notebook install, you will be given a token in your console, and you can copy
 paste it into the interface to log in. 
 
-image:: ../images/notebook-login.png
+.. image:: ../images/notebook-login.png
 
 You can then browse to localhost at the port specified to see the interface!
 The first prompt will ask you to create a collection, which is a grouping of workflows.
 You might find it useful to organize your projects.
 
-image:: ../images/after-notebook-login.png
+.. image:: ../images/after-notebook-login.png
 
 Next, click on the button to create a new workflow. The next
 form will provide input fields for all arguments provided by your Snakemake
@@ -53,7 +53,7 @@ installation. You can select the blue buttons at the top (they are always at the
 top) to jump to a section, and see the command being previewed at the bottom.
 The command will always update when you make a new selection.
 
-image:: ../images/new-workflow.png
+.. image:: ../images/new-workflow.png
 
 Note that if you start running your notebook in a location without any Snakefiles,
 you will get a message that tells you to create one first. A Snakefile matching
@@ -63,19 +63,19 @@ Snakefile, or provided conflicting commands) then you'll be returned to this
 view with an error message. If it's valid, you'll be redirected to a page to monitor
 the workflow.
 
-image:: ../images/workflow-detail.png
+.. image:: ../images/workflow-detail.png
 
 This page also has metadata for how to interact with your workflow if you choose
 to run it again with Snakemake from the command line. A token and arguments for monitoring
 are required. At the bottom part of the page, there is a status table that updates
 automatically via a Web Socket.
 
-image:: ../images/workflow-table.png
+.. image:: ../images/workflow-table.png
 
 Finally, you'll also be able to see your new collection in the Workflow Collections table
 on the dashboard.
 
-image:: ../images/dashboard.png
+.. image:: ../images/dashboard.png
 
 
 Continuing A Workflow

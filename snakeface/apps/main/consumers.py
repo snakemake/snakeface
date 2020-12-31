@@ -18,6 +18,7 @@ def get_statuses(workflow_id):
             "statuses": serialize_workflow_statuses(workflow),
             "output": workflow.output,
             "error": workflow.error,
+            "retval": workflow.retval,
         }
     except:
         return False
@@ -46,6 +47,10 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                     "message": "Workflow with id %s does not exist." % self.workflow_id
                 }
                 status = "error"
+                self.connected = False
+
+            # Break the connection if the workflow is finished (status 0)
+            elif data.get("retval") == 0:
                 self.connected = False
 
             await self.send_json(

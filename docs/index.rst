@@ -21,13 +21,12 @@ To learn more about Snakemake, visit the `official documentation <https://snakem
 
 .. _main-getting-started:
 
----------------
-Getting started
----------------
+----------------------------------------
+Getting started with Snakemake Interface
+----------------------------------------
 
 Snakeface can be used on your local machine to provide a nice interface to running
-snakemake workflows, or deployed by a group to run shared workflows. See
- :ref:`use-cases` for an overview of different use cases.
+snakemake workflows, or deployed by a group to run shared workflows. See :ref:`use-cases` for an overview of different use cases.
 
 .. _main-support:
 
@@ -66,18 +65,17 @@ Resources
    :caption: Getting started
    :name: getting_started
    :hidden:
-   :maxdepth: 1
+   :maxdepth: 2
 
-   getting_started/installation
+   getting_started/index
 
 .. toctree::
-  :caption: Deploy templates
-  :name: deployTemplates
+  :caption: Use Cases
+  :name: use_cases
   :hidden:
-  :maxdepth: 1
+  :maxdepth: 2
 
-  deploy/deploy
-  deploy/template
+  use_cases/index
 
 .. toctree::
     :caption: API Reference

@@ -21,7 +21,9 @@ dependencies are on your system). So you can download the example as follows:
 
 
 This should extract a ``data`` folder and an ``environment.yaml``.
-You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stable/tutorial/basics.html#summary>_`:
+You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stable/tutorial/basics.html#summary>_`.
+This Snakefile is the same as in the tutorial, with the addition of adding the ``environment.yaml`` to each
+section.
 
 .. code:: console
 
@@ -38,6 +40,8 @@ You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stabl
             "data/samples/{sample}.fastq"
         output:
             "mapped_reads/{sample}.bam"
+        conda:
+             "environment.yaml"
         shell:
             "bwa mem {input} | samtools view -Sb - > {output}"
 
@@ -47,6 +51,8 @@ You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stabl
             "mapped_reads/{sample}.bam"
         output:
             "sorted_reads/{sample}.bam"
+        conda:
+             "environment.yaml"
         shell:
             "samtools sort -T sorted_reads/{wildcards.sample} "
             "-O bam {input} > {output}"
@@ -57,6 +63,8 @@ You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stabl
             "sorted_reads/{sample}.bam"
         output:
             "sorted_reads/{sample}.bam.bai"
+        conda:
+             "environment.yaml"
         shell:
             "samtools index {input}"
 
@@ -68,6 +76,8 @@ You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stabl
             bai=expand("sorted_reads/{sample}.bam.bai", sample=SAMPLES)
         output:
             "calls/all.vcf"
+        conda:
+             "environment.yaml"
         shell:
             "samtools mpileup -g -f {input.fa} {input.bam} | "
             "bcftools call -mv - > {output}"
@@ -78,6 +88,8 @@ You should also create the `Snakefile <https://snakemake.readthedocs.io/en/stabl
             "calls/all.vcf"
         output:
             "plots/quals.svg"
+        conda:
+             "environment.yaml"
         script:
             "scripts/plot-quals.py"
 
@@ -87,4 +99,7 @@ Running Snakeface
 =================
 
 At this point, from this working directory you can run Snakeface. For example, you
-might run a notebook (:ref:`getting_started-notebook`).
+might run a notebook (:ref:`getting_started-notebook`). Make sure to select ``--use-conda``
+or else the environment above won't be properly sourced. This is one deviation from the main
+Snakemake tutorial, which has you install dependencies on the command line before running
+the workflow, and the workflow doesn't have the ``conda`` sections.

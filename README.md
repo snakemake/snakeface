@@ -40,6 +40,8 @@ and the dashboard with more than one workflow.
 
 ## TODO:
 
+ - we should be able to cancel a workflow running, which kills the thread and un-dsiables the button.
+ - need to have signal for table to stop updating when workflow done
  - table should be rendered with display none on creation, and then shown when websocket updates with data
  - remove qcluster, we have threads for notebook 
 

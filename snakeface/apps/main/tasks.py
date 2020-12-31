@@ -19,6 +19,7 @@ def run_workflow(request, wid, uid):
     """
     workflow = get_object_or_404(Workflow, pk=wid)
     user = get_object_or_404(User, pk=uid)
+    running_notebook = cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY
 
     # Ensure the user has permission to run the workflow
     if user not in workflow.members:
@@ -28,18 +29,9 @@ def run_workflow(request, wid, uid):
     elif workflow.status == "RUNNING":
         messages.error(request, "This workflow is already running.")
 
-    elif cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
-        run_notebook_workflow(request, wid, uid)
-    return redirect("main:view_workflow", wid=workflow.id)
-
-
-def run_notebook_workflow(request, wid, uid):
-    workflow = get_object_or_404(Workflow, pk=wid)
-    user = get_object_or_404(User, pk=uid)
-
-    # Ensure that we aren't over count
-    if (
-        cfg.MAXIMUM_NOTEBOOK_JOBS
+    elif (
+        running_notebook
+        and cfg.MAXIMUM_NOTEBOOK_JOBS
         and Workflow.objects.filter(status="RUNNING").count()
         >= cfg.MAXIMUM_NOTEBOOK_JOBS
     ):
@@ -47,12 +39,18 @@ def run_notebook_workflow(request, wid, uid):
             request,
             "You already have the maximum %s jobs running." % cfg.MAXIMUM_NOTEBOOK_JOBS,
         )
-    else:
+    elif running_notebook:
+        workflow.reset()
         t = ThreadRunner(target=doRun, args=[workflow.id, user.id])
         t.setDaemon(True)
         t.set_workflow(workflow)
         t.start()
+        workflow.thread = t.thread_id
+        workflow.save()
         messages.success(request, "Workflow %s has started running." % workflow.id)
+    else:
+        messages.info(request, "Snakeface currently only supports notebook runs.")
+    return redirect("main:view_workflow", wid=workflow.id)
 
 
 # Statuses
@@ -98,12 +96,6 @@ def doRun(wid, uid):
     """The task to run a workflow"""
     workflow = Workflow.objects.get(pk=wid)
     user = User.objects.get(pk=uid)
-
-    # Clear the workflow of old output, return codes, and errors
-    workflow.output = None
-    workflow.error = None
-    workflow.retval = None
-    workflow.workflowstatus_set.all().delete()
 
     runner = CommandRunner()
     workflow.status = "RUNNING"

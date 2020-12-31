@@ -188,6 +188,14 @@ class Workflow(models.Model):
         if report_file:
             return read_file(report_file)
 
+    def reset(self):
+        """Empty all run related fields to prepare for a new run."""
+        self.output = None
+        self.error = None
+        self.retval = None
+        self.workflowstatus_set.all().delete()
+        self.save()
+
     def has_report(self):
         """returns True if the workflow command has a designated report, and
         the report file exists

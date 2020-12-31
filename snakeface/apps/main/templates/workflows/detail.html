@@ -38,7 +38,7 @@ tr.shown td.details-control {
                        {% if workflow.has_report %}<a target="_blank" class="btn btn-primary btn-sm" href="{% url 'main:view_workflow_report' workflow.id %}">View Report</a>{% endif %}
                        <a class="btn btn-danger btn-sm" style="float:right;" id="delete-workflow">DELETE</a>
                        <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:edit_workflow' workflow.id %}">EDIT</a>
-                       <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>
+                       <a class="btn btn-primary btn-sm" style="float:right; margin-right:2px" id="run-workflow" href="{% url 'main:run_workflow' workflow.id request.user.id %}" {% if workflow.status == "RUNNING" %}disabled{% endif %}>RE-RUN</a>
                    </div>      
                </div>
            <table class="tablesorter table table-striped" width="100%">
@@ -114,7 +114,6 @@ $("#delete-workflow").click(function(){
     }
 })
 
-{% if workflow.workflowstatus_set.count > 0 %}
 function format (d) {
     var row = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'
     $.each(d, function(i, n){
@@ -127,7 +126,7 @@ function format (d) {
 
     var table = $('#taskTable').DataTable( {
         "ajax": "{% url 'main:workflow_statuses' workflow.id  %}",
-        "pageLength": 25,
+        "pageLength": 100,
         "columns": [
             {
                 "className":      'details-control',
@@ -179,6 +178,9 @@ socket.onmessage = function(e){
         $('#taskTable').dataTable().fnAddData(data['text']['statuses']);
         $("#workflow-output").html(data['text']['output'])         
         $("#workflow-error").html(data['text']['error'])         
+        if (data['retval'] == 0) {
+            $("#run-workflow").attr('disabled', false);
+        }
     }
 };
 socket.onopen = function(e){
@@ -191,7 +193,6 @@ socket.onclose = function(e){
     console.log("close", e)
 };
 
-{% endif %}
 });
 </script>
 {% endblock %}
