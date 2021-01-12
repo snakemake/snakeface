@@ -12,5 +12,6 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/snakemake/snakeface/tree/main) (master)
+ - adding missing social auth libraries (0.0.12)
  - early release with snakeface notebooks (0.0.11)
  - skeleton release (0.0.0)

@@ -2,7 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-__version__ = "0.0.11"
+__version__ = "0.0.12"
 AUTHOR = "Vanessa Sochat"
 AUTHOR_EMAIL = "vsochat@stanford.edu"
 NAME = "snakeface"
@@ -30,6 +30,8 @@ INSTALL_REQUIRES = (
     ("djangorestframework", {"exact_version": "3.11.1"}),
     ("drf-yasg", {"exact_version": "1.20.0"}),
     ("channels", {"exact_version": "3.0.3"}),
+    ("social-auth-app-django", {"min_version": "4.0.0"}),
+    ("social-auth-core", {"min_version": "3.3.3"}),
 )
 
 # Dependencies provided by snakemake: pyYaml, jinja2
