@@ -2,7 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-__version__ = "0.0.0"
+__version__ = "0.0.1"
 AUTHOR = "Vanessa Sochat"
 AUTHOR_EMAIL = "vsochat@stanford.edu"
 NAME = "snakeface"
@@ -21,12 +21,12 @@ INSTALL_REQUIRES = (
     ("pyaml", {"min_version": "20.4.0"}),
     ("Jinja2", {"min_version": "2.11.2"}),
     ("Django", {"exact_version": "3.0.8"}),
-    ("django-q", {"exact_version": "1.3.4"}),
-    ("django-crispy-forms", {"exact_version": "1.10.0"}),
-    ("django-taggit", {"exact_version": "1.3.0"}),
-    ("django-gravatar", {"exact_version": "1.4.4"}),
-    ("django-ratelimit", {"exact_version": "3.0.0"}),
-    ("django-extensions", {"exact_version": "3.0.2"}),
+    ("django-q", {"min_version": "1.3.4"}),
+    ("django-crispy-forms", {"min_version": "1.10.0"}),
+    ("django-taggit", {"min_version": "1.3.0"}),
+    ("django-gravatar", {"min_version": "1.4.4"}),
+    ("django-ratelimit", {"min_version": "3.0.0"}),
+    ("django-extensions", {"min_version": "3.0.2"}),
     ("djangorestframework", {"exact_version": "3.11.1"}),
     ("drf-yasg", {"exact_version": "1.20.0"}),
     ("channels", {"exact_version": "3.0.3"}),
