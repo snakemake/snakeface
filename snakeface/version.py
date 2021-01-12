@@ -18,6 +18,8 @@ LICENSE = "LICENSE"
 INSTALL_REQUIRES = (
     ("snakedeploy", {"min_version": None}),
     ("snakemake", {"min_version": None}),
+    ("pyaml", {"min_version": "20.4.0"}),
+    ("Jinja2", {"min_version": "2.11.2"}),
     ("Django", {"exact_version": "3.0.8"}),
     ("django-q", {"exact_version": "1.3.4"}),
     ("django-crispy-forms", {"exact_version": "1.10.0"}),
