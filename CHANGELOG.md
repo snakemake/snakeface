@@ -12,6 +12,9 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/snakemake/snakeface/tree/main) (master)
+ - removing extra dependencies for API (0.0.16)
+ - settings file needs to be within install location (0.0.15)
+ - adding missing settings.yml to install directory (0.0.14)
  - adding MANIFEST.in file (0.0.13)
  - adding missing social auth libraries (0.0.12)
  - early release with snakeface notebooks (0.0.11)

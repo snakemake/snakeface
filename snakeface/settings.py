@@ -12,8 +12,8 @@ from snakeface.apps.users.utils import get_username
 from datetime import datetime
 from importlib import import_module
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Build paths inside the project with the base directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # The snakeface global conflict contains all settings.
 SETTINGS_FILE = os.path.join(BASE_DIR, "settings.yml")
@@ -134,11 +134,9 @@ INSTALLED_APPS = [
     "django_extensions",
     "crispy_forms",
     "social_django",
-    "django_gravatar",
     "django_q",
     "rest_framework",
     "rest_framework.authtoken",
-    "drf_yasg",
 ]
 
 

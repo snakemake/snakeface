@@ -2,7 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-__version__ = "0.0.13"
+__version__ = "0.0.16"
 AUTHOR = "Vanessa Sochat"
 AUTHOR_EMAIL = "vsochat@stanford.edu"
 NAME = "snakeface"
@@ -32,13 +32,13 @@ INSTALL_REQUIRES = (
     ("channels", {"exact_version": "3.0.3"}),
     ("social-auth-app-django", {"min_version": "4.0.0"}),
     ("social-auth-core", {"min_version": "3.3.3"}),
+    ("psycopg2-binary", {"min_version": "2.8.5"}),
 )
 
 # Dependencies provided by snakemake: pyYaml, jinja2
 
 EMAIL_REQUIRES = (("sendgrid", {"min_version": "6.4.3"}),)
-POSTGRES_REQUIRES = (("psycopg2-binary", {"min_version": "2.8.5"}),)
 
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
 
-ALL_REQUIRES = INSTALL_REQUIRES + EMAIL_REQUIRES + POSTGRES_REQUIRES
+ALL_REQUIRES = INSTALL_REQUIRES + EMAIL_REQUIRES

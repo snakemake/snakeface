@@ -99,6 +99,6 @@ As a user, you most likely want to use Snakeface as an on demand notebook, so no
 setup is needed other than installing the package. As we add more deployment types that
 warrant additional configuration, or in the case of installing Snakeface as a cluster admin,
 you likely will want to install from the source repository (or a release) and 
-edit the settings.yml file in the root of the repository before deploying your service.
+edit the settings.yml file in the snakemake folder before deploying your service.
 More information will be added as this is developed. If you are interested, you can
 look at :ref:`getting_started-settings`.
