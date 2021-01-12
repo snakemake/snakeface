@@ -6,4 +6,4 @@ docutils==0.12
 recommonmark
 configargparse
 appdirs
-Django
+snakeface
