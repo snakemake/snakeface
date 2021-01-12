@@ -2,7 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-__version__ = "0.0.1"
+__version__ = "0.0.11"
 AUTHOR = "Vanessa Sochat"
 AUTHOR_EMAIL = "vsochat@stanford.edu"
 NAME = "snakeface"
@@ -24,7 +24,7 @@ INSTALL_REQUIRES = (
     ("django-q", {"min_version": "1.3.4"}),
     ("django-crispy-forms", {"min_version": "1.10.0"}),
     ("django-taggit", {"min_version": "1.3.0"}),
-    ("django-gravatar", {"min_version": "1.4.4"}),
+    ("django-gravatar", {"min_version": None}),
     ("django-ratelimit", {"min_version": "3.0.0"}),
     ("django-extensions", {"min_version": "3.0.2"}),
     ("djangorestframework", {"exact_version": "3.11.1"}),
