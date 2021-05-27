@@ -62,8 +62,10 @@ project = "Snakeface"
 copyright = "2020, Johannes Koester and Vanessa Sochat"
 
 from snakeface import version
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "snakeface.settings")
 import django
+
 django.setup()
 
 # The version info for the project you're documenting, acts as replacement for

@@ -1,0 +1,8 @@
+include README.md LICENSE CHANGELOG.md settings.yml
+recursive-include snakeface *
+prune snakeface/plugins
+recursive-exclude snakeface secret_key.py
+recursive-exclude * migrations
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
