@@ -7,7 +7,6 @@ from snakeface.settings import cfg
 from asgiref.sync import sync_to_async
 
 
-@sync_to_async
 def get_statuses(workflow_id):
     """Return a dictionary of workflow statuses on success. If the workflow
     doesn't exist, then return False and we disconnect from the socket.
