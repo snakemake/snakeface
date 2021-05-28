@@ -94,26 +94,6 @@ def get_parser():
         help="Force threads rather than processes.",
     )
 
-    parser.add_argument(
-        "repo",
-        nargs="?",
-        help="Repository address and destination to deploy, e.g., <source> <dest>",
-    )
-
-    parser.add_argument(
-        "dest",
-        nargs="?",
-        help="Path to clone the repository, should not exist.",
-    )
-
-    parser.add_argument(
-        "--force",
-        dest="force",
-        help="If the folder exists, force overwrite, meaning remove and replace.",
-        default=False,
-        action="store_true",
-    )
-
     description = "subparsers for Snakeface"
     subparsers = parser.add_subparsers(
         help="snakeface actions",
