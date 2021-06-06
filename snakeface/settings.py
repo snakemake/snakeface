@@ -4,45 +4,32 @@ __license__ = "MPL 2.0"
 
 import os
 import tempfile
-import yaml
 import sys
 
 from django.core.management.utils import get_random_secret_key
 from snakeface.apps.users.utils import get_username
-from datetime import datetime
 from importlib import import_module
+from .setup import (
+    Settings,
+    USER_SETTINGS,
+    STATIC_ROOT,
+    MEDIA_ROOT,
+    USER_DATABASE,
+    MIGRATIONS_MODULE_PATH,
+    MIGRATIONS_MODULE,
+)
+
+# Add migrations "module" to path
+sys.path.insert(0, os.path.dirname(MIGRATIONS_MODULE_PATH))
 
 # Build paths inside the project with the base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # The snakeface global conflict contains all settings.
-SETTINGS_FILE = os.path.join(BASE_DIR, "settings.yml")
-if not os.path.exists(SETTINGS_FILE):
-    sys.exit("Global settings file settings.yml is missing in the install directory.")
+if not os.path.exists(USER_SETTINGS):
+    sys.exit("User settings %s not found! Run snakeface init." % USER_SETTINGS)
 
-
-# Read in the settings file to get settings
-class Settings:
-    """convert a dictionary of settings (from yaml) into a class"""
-
-    def __init__(self, dictionary):
-        for key, value in dictionary.items():
-            setattr(self, key, value)
-        setattr(self, "UPDATED_AT", datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
-
-    def __str__(self):
-        return "[snakeface-settings]"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __iter__(self):
-        for key, value in self.__dict__.items():
-            yield key, value
-
-
-with open(SETTINGS_FILE, "r") as fd:
-    cfg = Settings(yaml.load(fd.read(), Loader=yaml.FullLoader))
+cfg = Settings(USER_SETTINGS)
 
 # For each setting, if it's defined in the environment with SNAKEFACE_ prefix, override
 for key, value in cfg:
@@ -52,24 +39,14 @@ for key, value in cfg:
 
 # Secret Key
 
-
-def generate_secret_key(filename):
-    """A helper function to write a randomly generated secret key to file"""
-    key = get_random_secret_key()
-    with open(filename, "w") as fd:
-        fd.writelines("SECRET_KEY = '%s'" % key)
-
-
 # Generate secret key if doesn't exist, and not defined in environment
-SECRET_KEY = os.environ.get("SECRET_KEY")
-if not SECRET_KEY:
-    try:
-        from .secret_key import SECRET_KEY
-    except ImportError:
-        SETTINGS_DIR = os.path.abspath(os.path.dirname(__file__))
-        generate_secret_key(os.path.join(SETTINGS_DIR, "secret_key.py"))
-        from .secret_key import SECRET_KEY
+SECRET_KEY = os.environ.get("SECRET_KEY") or cfg.SECRET_KEY
 
+# Add the secret key to settings if it doesn't exist in environment
+if not SECRET_KEY:
+    SECRET_KEY = get_random_secret_key()
+    cfg.SECRET_KEY = SECRET_KEY
+    cfg.save()
 
 # Private only should be a boolean
 cfg.PRIVATE_ONLY = cfg.PRIVATE_ONLY is not None
@@ -266,7 +243,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            "NAME": USER_DATABASE,
         }
     }
 
@@ -302,6 +279,8 @@ Q_CLUSTER = {
     "orm": "default",
 }
 
+STATIC_URL = "/static/"
+MEDIA_URL = "/data/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -337,12 +316,16 @@ VIEW_RATE_LIMIT_BLOCK = (
 LOGIN_REDIRECT_URL = "/login"
 LOGIN_URL = "/login"
 
-# If we are using a notebook, grab the user that started
-cfg.USERNAME = None
-if cfg.NOTEBOOK or cfg.NOTEBOOK_ONLY:
-    cfg.USERNAME = get_username()
+# Grab the user that started
+cfg.USERNAME = get_username()
 
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+
+# Migrations need to be in custom location
+MIGRATION_MODULES = {
+    "users": "%s.users_migrations" % MIGRATIONS_MODULE,
+    "main": "%s.main_migrations" % MIGRATIONS_MODULE,
+}
 
 ## PLUGINS #####################################################################
 

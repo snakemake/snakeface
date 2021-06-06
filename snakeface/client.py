@@ -5,6 +5,7 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from snakeface.logger import setup_logger
+from snakeface.setup import init_snakeface
 from django.core.wsgi import get_wsgi_application
 from django.core import management
 from snakeface.version import __version__
@@ -37,6 +38,7 @@ def get_parser():
     parser.add_argument(
         "--verbosity",
         dest="verbosity",
+        type=int,
         help="Verbosity (0, 1, 2, 3).",
         choices=list(range(0, 4)),
         default=0,
@@ -104,6 +106,7 @@ def get_parser():
 
     # print version and exit
     subparsers.add_parser("notebook", help="run a snakeface notebook")
+    subparsers.add_parser("init", help="Create new settings in $HOME/.snakeface")
 
     return parser
 
@@ -128,11 +131,15 @@ def main():
         print(__version__)
         sys.exit(0)
 
-    # Do we want a notebook?
-    notebook = args.command == "notebook"
-    if notebook:
-        os.environ["SNAKEFACE_NOTEBOOK"] = "yes"
-        os.putenv("SNAKEFACE_NOTEBOOK", "yes")
+    # Currently we only support notebooks!
+    notebook = True
+
+    # Init snakeface settings in home if they don't exist
+    settings_file = init_snakeface(notebook)
+
+    # If we just needed to do that, exit
+    if args.command == "init":
+        sys.exit("Init complete. Settings are at %s" % settings_file)
 
     # If a working directory is set
     if not args.workdir or args.workdir == ".":

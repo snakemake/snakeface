@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/snakemake/snakeface/tree/main) (master)
+ - moving snakeface settings and static to use home (0.0.19)
  - removing erroneous variables (0.0.18)
  - fixing async bug and adding missing template file (0.0.17)
  - removing extra dependencies for API (0.0.16)

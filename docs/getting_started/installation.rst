@@ -7,12 +7,51 @@ Installation
 Snakeface can be installed and run from a virtual environment, or from a container.
 
 
+Install via pip
+===============
+
+Snakeface can be installed with pip.
+
+.. code:: console
+
+    $ pip install snakeface
+
+
+Once it's installed, you should be able to inspect the client!
+
+
+.. code-block:: console
+
+    $ snakeface --help
+
+
+The first thing you should do is run ``snakeface init``, which will create a 
+structure in your $HOME for snakeface settings, static files, and a local
+database.
+
+.. code-block:: console
+
+    $ snakeface init
+    Init complete. Settings are at /home/vanessa/.snakeface/settings.yml
+    tree ~/.snakeface/
+    /home/vanessa/.snakeface/
+    ├── data
+    └── static
+
+
+At this point you can inspect the settings file generated, and make any updates.
+When you run a notebook, this file will be updated with a secret key for the
+server, so you should keep this settings file private.  If you ever
+need to regenerate it from scratch, you can remove the file or entire
+folder and re-run snakeface init. See :ref:`getting_started-settings` for more detail.
+
+
 Virtual Environment
 ===================
 
 First, clone the repository code.
 
-.. code:: console
+.. code-block:: console
 
     $ git clone git@github.com:snakemake/snakeface.git
     $ cd snakeface
@@ -20,7 +59,7 @@ First, clone the repository code.
 
 Then you'll want to create a new virtual environment, and install dependencies.
 
-.. code:: console
+.. code-block:: console
 
     $ python -m venv env
     $ source env/bin/activate
@@ -32,64 +71,6 @@ And install Snakeface (from the repository directly)
 .. code:: console
  
     $ pip install -e .
-
-
-Install via pip
-===============
-
-Snakeface can also be installed with pip.
-
-.. code:: console
-
-    $ pip install snakeface
-
-
-Once it's installed, you should be able to inspect the client!
-
-
-.. code:: console
-
-    $ snakeface --help
-    usage: snakeface [-h] [--version] [--noreload] [--verbosity {0,1,2,3}]
-                     [--workdir [WORKDIR]] [--auth {token}] [--port PORT]
-                     [--verbose] [--log-disable-color] [--log-use-threads]
-                     [--force]
-                     [repo] [dest] {notebook} ...
-
-    Snakeface: interface to snakemake.
-
-    positional arguments:
-      repo                  Repository address and destination to deploy, e.g.,
-                            <source> <dest>
-      dest                  Path to clone the repository, should not exist.
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      --version             print the version and exit.
-      --noreload            Tells Django to NOT use the auto-reloader.
-      --verbosity {0,1,2,3}
-                            Verbosity (0, 1, 2, 3).
-      --workdir [WORKDIR]   Specify the working directory.
-      --force               If the folder exists, force overwrite, meaning remove
-                            and replace.
-
-    SETTINGS:
-      --auth {token}        Authentication type to create for the interface,
-                            defaults to token.
-
-    NETWORKING:
-      --port PORT           Port to serve application on.
-
-    LOGGING:
-      --verbose             verbose output for logging.
-      --log-disable-color   Disable color for snakeface logging.
-      --log-use-threads     Force threads rather than processes.
-
-    actions:
-      subparsers for Snakeface
-
-      {notebook}            snakeface actions
-        notebook            run a snakeface notebook
 
 
 Setup
