@@ -51,7 +51,7 @@ ENVIRONMENT: test
 HELP_CONTACT_URL: https://github.com/snakemake/snakeface/issues
 SENDGRID_API_KEY: null
 SENDGRID_SENDER_EMAIL: null
-DOMAIN_NAME: http://127.0.0.1
+DOMAIN_NAME: 127.0.0.1
 DOMAIN_PORT: 5000
 REQUIRE_AUTH: true
 

@@ -59,7 +59,10 @@ def get_parser():
 
     network_group = parser.add_argument_group("NETWORKING")
     network_group.add_argument(
-        "--port", dest="port", help="Port to serve application on.", default=5000
+        "--port", dest="port", help="Port to serve application on."
+    )
+    network_group.add_argument(
+        "--host", dest="host", help="Domain name to serve application."
     )
 
     # Logging
@@ -131,15 +134,21 @@ def main():
         print(__version__)
         sys.exit(0)
 
-    # Currently we only support notebooks!
-    notebook = True
-
     # Init snakeface settings in home if they don't exist
-    settings_file = init_snakeface(notebook)
+    settings = init_snakeface()
+
+    # Currently we only support notebooks!
+    settings.NOTEBOOK = True
+    settings.save()
+
+    # Default to port on command line, then settings, then 5000
+    port = args.port or settings.DOMAIN_PORT or 5000
+    host = args.host or settings.DOMAIN_NAME or "127.0.0.1"
+    host = "%s:%s" % (host, port)
 
     # If we just needed to do that, exit
     if args.command == "init":
-        sys.exit("Init complete. Settings are at %s" % settings_file)
+        sys.exit("Init complete. Settings are at %s" % settings.settings_file)
 
     # If a working directory is set
     if not args.workdir or args.workdir == ".":
@@ -169,7 +178,7 @@ def main():
         "collectstatic", verbosity=args.verbosity, interactive=False
     )
     management.call_command(
-        "runserver", args.port, verbosity=args.verbosity, noreload=not args.noreload
+        "runserver", host, verbosity=args.verbosity, noreload=not args.noreload
     )
     sys.exit(0)
 

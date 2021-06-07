@@ -88,16 +88,10 @@ def init_home():
     Path(init_file).touch()
 
 
-def init_snakeface(notebook=True):
+def init_snakeface():
     """
     Create all directories that should hold static and media files
     """
     init_home()
     user_settings = init_settings()
-
-    # If the user requested a notebook, add to settings
-    if notebook:
-        cfg = Settings(user_settings)
-        cfg.NOTEBOOK = True
-        cfg.save()
-    return user_settings
+    return Settings(user_settings)
