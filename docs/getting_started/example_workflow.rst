@@ -88,7 +88,9 @@ section.
 Running Snakeface
 =================
 
-At this point, from this working directory you can run Snakeface. For example, you
+At this point you can run snakeface. It should use the port and host that you've
+specified (localhost port 5000). If you need to change any of these settings, update
+the settings.yml file in ``~/.snakeface``. At this point, from this working directory you can run Snakeface. For example, you
 might run a :ref:`getting_started-notebook`. Make sure to select ``--use-conda``
 or else the environment above won't be properly sourced. This is one deviation from the main
 Snakemake tutorial, which has you install dependencies on the command line before running

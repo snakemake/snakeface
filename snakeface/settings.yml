@@ -1,5 +1,5 @@
-# The snakeface settings.yml file is kept alongside the install location,
-# meaning that it should only be editable by an owner or system administrator
+# This is a base settings.yml file that will be added to the user home
+# on first use of snakeface.
 
 # How to fill in fields? -------------------------------------------------------
 # For fields that you want to leave undefined, leave them as null
@@ -44,14 +44,14 @@ EXECUTOR_GA4GH_TES: null
 # Disable other argument groups by setting these to non null
 DISABLE_SINGULARITY: null
 DISABLE_CONDA: null
-DISABLE_NOTEBOOKS: true
+DISABLE_NOTEBOOKS: null
 
 # Global server settings
 ENVIRONMENT: test
 HELP_CONTACT_URL: https://github.com/snakemake/snakeface/issues
 SENDGRID_API_KEY: null
 SENDGRID_SENDER_EMAIL: null
-DOMAIN_NAME: http://127.0.0.1
+DOMAIN_NAME: 127.0.0.1
 DOMAIN_PORT: 5000
 REQUIRE_AUTH: true
 
